@@ -1,0 +1,42 @@
+version: 1
+templates:
+  daily_sales:
+    description: Latest certified daily sales and revenue by channel.
+    intent_phrases: [gross sales, net sales, net revenue, average order value, sales by channel]
+    allowed_tables: [retail_kpi_daily]
+    max_rows: 30
+    sql: |
+      SELECT date_key, channel, gross_sales, net_sales, net_revenue, average_order_value
+      FROM retail_kpi_daily
+      ORDER BY date_key DESC, channel
+      LIMIT 30
+  conversion_rate:
+    description: Latest certified digital funnel conversion by device.
+    intent_phrases: [conversion rate, funnel conversion, sessions converted]
+    allowed_tables: [agg_channel_funnel]
+    max_rows: 30
+    sql: |
+      SELECT date_key, device_type, sessions, purchasing_sessions, conversion_rate
+      FROM agg_channel_funnel
+      ORDER BY date_key DESC, device_type
+      LIMIT 30
+  product_returns:
+    description: Latest certified product sales and return rates.
+    intent_phrases: [return rate, returned units, product returns metric]
+    allowed_tables: [agg_daily_product_sales]
+    max_rows: 30
+    sql: |
+      SELECT date_key, product_key, units_sold, returned_units, return_rate
+      FROM agg_daily_product_sales
+      ORDER BY date_key DESC, product_key
+      LIMIT 30
+  inventory_health:
+    description: Latest certified store inventory health and stockout rates.
+    intent_phrases: [stockout rate, inventory health, zero stock, on hand inventory]
+    allowed_tables: [agg_inventory_health]
+    max_rows: 30
+    sql: |
+      SELECT date_key, store_key, observations, stockout_observations, stockout_rate
+      FROM agg_inventory_health
+      ORDER BY date_key DESC, store_key
+      LIMIT 30

@@ -329,6 +329,6 @@ terraform/               optional infrastructure examples
 - [x] Gold dimensions, facts, aggregates, and KPIs are runnable.
 - [x] Audit and reconciliation tables are populated.
 - [x] Automated tests prove idempotency and recovery.
-- [ ] RAG indexing, structured retrieval, citations, and guardrails are runnable.
+- [x] RAG indexing, structured retrieval, citations, and guardrails are runnable.
 - [ ] Databricks deployment assets validate and deploy to development.
 - [ ] Operations, security, deployment, recovery, and RAG evaluation reports are complete.

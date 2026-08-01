@@ -12,11 +12,12 @@ The repository is intentionally local-first. Core logic can be developed and tes
 - Milestone 3 typed Silver, quality quarantine, CDC merge, and SCD Type 2: complete.
 - Milestone 4 Gold dimensions, facts, aggregates, KPIs, and reconciliation: complete.
 - Milestone 5 checkpointed customer-event and inventory streaming: complete.
-- RAG and Databricks deployment: planned in later milestones.
+- Milestone 6 local citation-grounded RAG copilot and safe Gold SQL routing: complete.
+- Databricks deployment: planned in a later milestone.
 
 See [docs/phase_1_plan.md](docs/phase_1_plan.md) for the full architecture, requirements, data model, controls, milestones, and acceptance checklist.
 
-Implementation details and reproducible proofs are documented in [docs/landing_and_bronze.md](docs/landing_and_bronze.md), [docs/silver_quality_and_scd.md](docs/silver_quality_and_scd.md), [docs/gold_analytics.md](docs/gold_analytics.md), and [docs/structured_streaming.md](docs/structured_streaming.md).
+Implementation details and reproducible proofs are documented in [docs/landing_and_bronze.md](docs/landing_and_bronze.md), [docs/silver_quality_and_scd.md](docs/silver_quality_and_scd.md), [docs/gold_analytics.md](docs/gold_analytics.md), [docs/structured_streaming.md](docs/structured_streaming.md), and [docs/rag_copilot.md](docs/rag_copilot.md).
 
 ## Solution flow
 
@@ -141,6 +142,18 @@ wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .ve
 ```
 
 The KPI catalog is maintained in `configs/kpi_definitions.yml`; example certified queries are available in `sql/gold/example_analytics.sql`.
+
+## Run the local RAG copilot
+
+Build the free deterministic index, ask a citation-backed document question, and run the offline safety evaluation:
+
+```powershell
+python scripts\index_documents.py
+python scripts\ask_copilot.py "How many days can I return an unopened item?"
+python scripts\evaluate_rag.py
+```
+
+The document path has no paid API, account, or model-download requirement. Numerical questions route only to approved Gold SQL and do not produce a value until a Spark or Databricks SQL executor is connected. See [docs/rag_copilot.md](docs/rag_copilot.md) for the evidence contract, controls, API, and evaluation details.
 
 ## Repository conventions
 

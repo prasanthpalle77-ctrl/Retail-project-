@@ -31,6 +31,7 @@ data/landing/**
 data/checkpoints/**
 data/quarantine/**
 data/warehouse/**
+data/index/**
 spark-warehouse/
 metastore_db/
 derby.log
@@ -51,3 +52,4 @@ build/
 !data/checkpoints/.gitkeep
 !data/quarantine/.gitkeep
 !data/warehouse/.gitkeep
+!data/index/.gitkeep
