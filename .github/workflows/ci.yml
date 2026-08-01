@@ -21,6 +21,10 @@ jobs:
         run: python -m pip install -r requirements-dev.txt
       - name: Validate environment
         run: python scripts/validate_environment.py
+      - name: Validate Databricks bundle structure
+        run: python scripts/validate_bundle.py
+      - name: Build deployment wheel
+        run: python -m pip wheel . --no-deps --wheel-dir dist
       - name: Lint
         run: python -m ruff check src tests scripts
       - name: Format check

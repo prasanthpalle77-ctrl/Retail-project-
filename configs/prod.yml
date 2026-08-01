@@ -5,10 +5,19 @@ application:
 storage:
   mode: databricks
   root: /Volumes/novaretail_prod/platform/data
+  landing: /Volumes/novaretail_prod/platform/data/landing
+  bronze: /Volumes/novaretail_prod/platform/data/warehouse/bronze
+  silver: /Volumes/novaretail_prod/platform/data/warehouse/silver
+  gold: /Volumes/novaretail_prod/platform/data/warehouse/gold
+  quarantine: /Volumes/novaretail_prod/platform/data/quarantine
+  checkpoints: /Volumes/novaretail_prod/platform/data/checkpoints
+  documents: /Volumes/novaretail_prod/platform/data/documents
 
 spark:
   app_name: NovaRetailProduction
+  master: null
   shuffle_partitions: 200
+  enable_delta: false
 
 databricks:
   catalog: novaretail_prod

@@ -9,7 +9,7 @@ from typing import Any
 
 import yaml
 
-SUPPORTED_ENVIRONMENTS = frozenset({"dev", "test", "staging", "prod"})
+SUPPORTED_ENVIRONMENTS = frozenset({"databricks_dev", "dev", "test", "staging", "prod"})
 
 
 class SettingsError(ValueError):

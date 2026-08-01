@@ -13,11 +13,12 @@ The repository is intentionally local-first. Core logic can be developed and tes
 - Milestone 4 Gold dimensions, facts, aggregates, KPIs, and reconciliation: complete.
 - Milestone 5 checkpointed customer-event and inventory streaming: complete.
 - Milestone 6 local citation-grounded RAG copilot and safe Gold SQL routing: complete.
-- Databricks deployment: planned in a later milestone.
+- Milestone 7 Databricks bundle, jobs, OIDC delivery, and runbooks: code complete.
+- Live Databricks development deployment: pending workspace configuration and authorization.
 
 See [docs/phase_1_plan.md](docs/phase_1_plan.md) for the full architecture, requirements, data model, controls, milestones, and acceptance checklist.
 
-Implementation details and reproducible proofs are documented in [docs/landing_and_bronze.md](docs/landing_and_bronze.md), [docs/silver_quality_and_scd.md](docs/silver_quality_and_scd.md), [docs/gold_analytics.md](docs/gold_analytics.md), [docs/structured_streaming.md](docs/structured_streaming.md), and [docs/rag_copilot.md](docs/rag_copilot.md).
+Implementation details and reproducible proofs are documented in [docs/landing_and_bronze.md](docs/landing_and_bronze.md), [docs/silver_quality_and_scd.md](docs/silver_quality_and_scd.md), [docs/gold_analytics.md](docs/gold_analytics.md), [docs/structured_streaming.md](docs/structured_streaming.md), [docs/rag_copilot.md](docs/rag_copilot.md), and [docs/databricks_deployment.md](docs/databricks_deployment.md).
 
 ## Solution flow
 
@@ -154,6 +155,18 @@ python scripts\evaluate_rag.py
 ```
 
 The document path has no paid API, account, or model-download requirement. Numerical questions route only to approved Gold SQL and do not produce a value until a Spark or Databricks SQL executor is connected. See [docs/rag_copilot.md](docs/rag_copilot.md) for the evidence contract, controls, API, and evaluation details.
+
+## Validate and deploy to Databricks
+
+The bundle has development, staging, and production targets plus batch, streaming, and RAG evaluation jobs. Local validation creates no cloud resources:
+
+```powershell
+python scripts\validate_bundle.py
+databricks bundle validate --target dev
+databricks bundle plan --target dev
+```
+
+Deployment is intentionally manual and uses GitHub OIDC without stored Databricks secrets. No job has an automatic schedule. See [docs/databricks_deployment.md](docs/databricks_deployment.md), [docs/security_and_governance.md](docs/security_and_governance.md), [docs/operations_and_recovery.md](docs/operations_and_recovery.md), and [docs/final_acceptance_report.md](docs/final_acceptance_report.md).
 
 ## Repository conventions
 

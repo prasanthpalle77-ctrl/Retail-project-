@@ -1,0 +1,161 @@
+resources:
+  jobs:
+    retail_batch_pipeline:
+      name: novaretail-${bundle.target}-batch-pipeline
+      description: Immutable Landing through certified Gold publication.
+      max_concurrent_runs: 1
+      timeout_seconds: 14400
+      queue:
+        enabled: true
+      parameters:
+        - name: batch_id
+          default: 20260101T000000Z_seed42
+      tags:
+        application: novaretail
+        environment: ${bundle.target}
+        workload: batch-lakehouse
+      tasks:
+        - task_key: bootstrap_governance
+          environment_key: default
+          spark_python_task:
+            python_file: ${workspace.file_path}/scripts/bootstrap_databricks.py
+            parameters:
+              - --catalog
+              - ${var.catalog}
+        - task_key: stage_landing
+          depends_on:
+            - task_key: bootstrap_governance
+          environment_key: default
+          spark_python_task:
+            python_file: ${workspace.file_path}/scripts/stage_landing.py
+            parameters:
+              - ${var.volume_root}/incoming/batch_id={{job.parameters.batch_id}}
+              - --landing-root
+              - ${var.volume_root}/landing
+              - --run-id
+              - landing-{{job.run_id}}
+        - task_key: bronze
+          depends_on:
+            - task_key: stage_landing
+          environment_key: default
+          spark_python_task:
+            python_file: ${workspace.file_path}/scripts/run_bronze_batch.py
+            parameters:
+              - "{{job.parameters.batch_id}}"
+              - --manifest-root
+              - ${var.volume_root}/landing/_manifests
+              - --bronze-root
+              - ${var.volume_root}/warehouse/bronze
+              - --environment
+              - ${var.environment}
+        - task_key: silver
+          depends_on:
+            - task_key: bronze
+          environment_key: default
+          spark_python_task:
+            python_file: ${workspace.file_path}/scripts/run_silver.py
+            parameters:
+              - --dataset
+              - all
+              - --run-id
+              - silver-{{job.run_id}}
+              - --environment
+              - ${var.environment}
+              - --rules
+              - ${workspace.file_path}/configs/data_quality_rules.yml
+        - task_key: gold
+          depends_on:
+            - task_key: silver
+          environment_key: default
+          spark_python_task:
+            python_file: ${workspace.file_path}/scripts/run_gold.py
+            parameters:
+              - --run-id
+              - gold-{{job.run_id}}
+              - --environment
+              - ${var.environment}
+              - --kpi-catalog
+              - ${workspace.file_path}/configs/kpi_definitions.yml
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "3"
+            dependencies:
+              - ${artifacts.default.whl}
+
+    retail_streaming_pipeline:
+      name: novaretail-${bundle.target}-available-now-streams
+      description: Checkpointed available-now customer and inventory micro-batches.
+      max_concurrent_runs: 1
+      timeout_seconds: 7200
+      queue:
+        enabled: true
+      tags:
+        application: novaretail
+        environment: ${bundle.target}
+        workload: structured-streaming
+      tasks:
+        - task_key: bootstrap_governance
+          environment_key: default
+          spark_python_task:
+            python_file: ${workspace.file_path}/scripts/bootstrap_databricks.py
+            parameters:
+              - --catalog
+              - ${var.catalog}
+        - task_key: customer_events
+          depends_on:
+            - task_key: bootstrap_governance
+          environment_key: default
+          spark_python_task:
+            python_file: ${workspace.file_path}/scripts/run_stream.py
+            parameters:
+              - customer_events
+              - ${var.volume_root}/streaming_input/customer_events
+              - --environment
+              - ${var.environment}
+              - --stream-name
+              - customer-events
+              - --max-files-per-trigger
+              - "10"
+        - task_key: inventory_events
+          depends_on:
+            - task_key: bootstrap_governance
+          environment_key: default
+          spark_python_task:
+            python_file: ${workspace.file_path}/scripts/run_stream.py
+            parameters:
+              - inventory_events
+              - ${var.volume_root}/streaming_input/inventory_events
+              - --environment
+              - ${var.environment}
+              - --stream-name
+              - inventory-events
+              - --max-files-per-trigger
+              - "10"
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "3"
+            dependencies:
+              - ${artifacts.default.whl}
+
+    rag_evaluation:
+      name: novaretail-${bundle.target}-rag-evaluation
+      description: Offline citation, refusal, injection, and routing evaluation.
+      max_concurrent_runs: 1
+      timeout_seconds: 1800
+      tags:
+        application: novaretail
+        environment: ${bundle.target}
+        workload: rag-evaluation
+      tasks:
+        - task_key: evaluate
+          environment_key: default
+          spark_python_task:
+            python_file: ${workspace.file_path}/scripts/evaluate_rag.py
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "3"
+            dependencies:
+              - ${artifacts.default.whl}

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import platform
 import shutil
-import subprocess
+import subprocess  # nosec B404
 import sys
 from pathlib import Path
 
@@ -17,7 +17,10 @@ def command_version(command: str, args: list[str]) -> str | None:
     executable = shutil.which(command)
     if not executable:
         return None
-    result = subprocess.run([executable, *args], capture_output=True, check=False, text=True)
+    # The executable is resolved with shutil.which and no shell is involved.
+    result = subprocess.run(  # nosec B603
+        [executable, *args], capture_output=True, check=False, text=True
+    )
     output = (result.stdout or result.stderr).strip()
     return output.splitlines()[0] if output else None
 
@@ -44,7 +47,8 @@ def main() -> int:
         java_command = (
             java_home / "bin" / ("java.exe" if platform.system() == "Windows" else "java")
         )
-        result = subprocess.run(
+        # The executable path is validated by configure_java and no shell is involved.
+        result = subprocess.run(  # nosec B603
             [str(java_command), "-version"], capture_output=True, check=False, text=True
         )
         java_version = (result.stdout or result.stderr).splitlines()[0]

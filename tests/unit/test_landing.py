@@ -10,6 +10,18 @@ from retail_lakehouse.ingestion.landing import (
     sha256_file,
     stage_file,
 )
+from scripts.stage_landing import resolve_reported_source
+
+
+def test_reported_cloud_source_is_constrained_to_batch_directory(tmp_path: Path) -> None:
+    batch = tmp_path / "batch"
+    batch.mkdir()
+    source = batch / "orders.jsonl"
+    source.write_text("{}\n", encoding="utf-8")
+
+    resolved = resolve_reported_source(batch, r"C:\developer\data\batch\orders.jsonl")
+
+    assert resolved == source
 
 
 def _stage(source: Path, landing: Path, registry: FileRegistry, batch_id: str = "B1"):

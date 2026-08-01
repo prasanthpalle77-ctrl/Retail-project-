@@ -1,0 +1,26 @@
+application:
+  environment: databricks_dev
+  log_level: INFO
+
+storage:
+  mode: databricks
+  root: /Volumes/novaretail_dev/platform/data
+  landing: /Volumes/novaretail_dev/platform/data/landing
+  bronze: /Volumes/novaretail_dev/platform/data/warehouse/bronze
+  silver: /Volumes/novaretail_dev/platform/data/warehouse/silver
+  gold: /Volumes/novaretail_dev/platform/data/warehouse/gold
+  quarantine: /Volumes/novaretail_dev/platform/data/quarantine
+  checkpoints: /Volumes/novaretail_dev/platform/data/checkpoints
+  documents: /Volumes/novaretail_dev/platform/data/documents
+
+spark:
+  app_name: NovaRetailDatabricksDev
+  master: null
+  shuffle_partitions: 16
+  enable_delta: false
+
+databricks:
+  catalog: novaretail_dev
+
+pipeline:
+  fail_on_critical_quality_rule: true

@@ -4,10 +4,22 @@ from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from uuid import uuid4
 
 from retail_lakehouse.ingestion import FileRegistry, stage_file
+
+
+def resolve_reported_source(generated_batch: Path, reported_path: str) -> Path:
+    """Resolve a report entry without reading outside the supplied batch directory."""
+
+    batch_root = generated_batch.resolve()
+    candidate = Path(reported_path).resolve()
+    try:
+        candidate.relative_to(batch_root)
+    except ValueError:
+        candidate = batch_root / PureWindowsPath(reported_path).name
+    return candidate
 
 
 def parse_args() -> argparse.Namespace:
@@ -26,8 +38,11 @@ def main() -> int:
     run_id = args.run_id or str(uuid4())
     results = []
     for source_name, file_path in sorted(report["files"].items()):
+        source_path = resolve_reported_source(args.generated_batch, str(file_path))
+        if not source_path.is_file():
+            raise FileNotFoundError(f"Reported source is not present in batch: {source_path}")
         result = stage_file(
-            Path(file_path),
+            source_path,
             args.landing_root,
             registry,
             source_name=source_name,
