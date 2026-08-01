@@ -75,7 +75,7 @@ def _validate_task_files(root: Path, jobs: Mapping[str, Any]) -> int:
         if not defaults:
             raise BundleValidationError(f"Job {job_key} needs the default environment.")
         default_spec = _mapping(defaults[0].get("spec"), f"default environment in {job_key}")
-        if "dist/*.whl" not in default_spec.get("dependencies", []):
+        if "../dist/*.whl" not in default_spec.get("dependencies", []):
             raise BundleValidationError(f"Job {job_key} must install the built deployment wheel.")
     return task_count
 
