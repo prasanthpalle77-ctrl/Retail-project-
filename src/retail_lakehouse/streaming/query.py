@@ -41,6 +41,10 @@ class StreamingQueryConfig:
 def start_file_stream(spark: Any, config: StreamingQueryConfig) -> Any:
     """Start a checkpointed JSON file stream and return its StreamingQuery."""
 
+    try:
+        from pyspark.sql import functions as functions
+    except ImportError as exc:
+        raise RuntimeError("PySpark is required for streaming queries.") from exc
     config.source_path.mkdir(parents=True, exist_ok=True)
     config.checkpoint_path.mkdir(parents=True, exist_ok=True)
     event_timestamp = SILVER_SPECS[config.dataset_name].event_timestamp
@@ -48,6 +52,15 @@ def start_file_stream(spark: Any, config: StreamingQueryConfig) -> Any:
         spark.readStream.schema(stream_schema_ddl(config.dataset_name))
         .option("maxFilesPerTrigger", config.max_files_per_trigger)
         .json(str(config.source_path.resolve()))
+        .select(
+            "*",
+            functions.col("_metadata.file_path").alias("_stream_source_file_path"),
+            functions.col("_metadata.file_name").alias("_stream_source_file_name"),
+            functions.col("_metadata.file_size").alias("_stream_source_file_size"),
+            functions.col("_metadata.file_modification_time").alias(
+                "_stream_source_file_modified_at"
+            ),
+        )
         .withWatermark(event_timestamp, f"{config.allowed_lateness_hours} hours")
     )
     stream_name = config.stream_name or f"novaretail-{config.dataset_name}"

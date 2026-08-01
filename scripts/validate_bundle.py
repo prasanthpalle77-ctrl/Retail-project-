@@ -113,7 +113,7 @@ def _assert_acyclic(job_key: str, dependencies: Mapping[str, set[str]]) -> None:
 
 
 def _validate_serverless_compatibility(root: Path) -> None:
-    unsupported = (".cache(", ".persist(")
+    unsupported = (".cache(", ".persist(", "input_file_name(")
     for path in (root / "src" / "retail_lakehouse").rglob("*.py"):
         source = path.read_text(encoding="utf-8")
         operation = next((item for item in unsupported if item in source), None)

@@ -52,8 +52,15 @@ def _with_bronze_metadata(frame: Any, dataset_name: str, batch_id: int) -> Any:
         from pyspark.sql import functions as functions
     except ImportError as exc:
         raise RuntimeError("PySpark is required for streaming processing.") from exc
-    source_columns = sorted(frame.columns)
-    source_file = functions.input_file_name()
+    stream_metadata_columns = (
+        "_stream_source_file_path",
+        "_stream_source_file_name",
+        "_stream_source_file_size",
+        "_stream_source_file_modified_at",
+    )
+    source_columns = sorted(
+        column for column in frame.columns if column not in stream_metadata_columns
+    )
     return (
         frame.withColumn("_corrupt_record", functions.lit(None).cast("string"))
         .withColumn(
@@ -61,15 +68,19 @@ def _with_bronze_metadata(frame: Any, dataset_name: str, batch_id: int) -> Any:
             functions.sha2(functions.to_json(functions.struct(*source_columns)), 256),
         )
         .withColumn("_source_system", functions.lit(f"{dataset_name.upper()}_STREAM"))
-        .withColumn("_source_file_path", source_file)
-        .withColumn("_source_file_name", functions.regexp_extract(source_file, r"([^/]+)$", 1))
-        .withColumn("_source_file_size", functions.lit(None).cast("long"))
-        .withColumn("_source_file_modified_at", functions.lit(None).cast("string"))
+        .withColumn("_source_file_path", functions.col("_stream_source_file_path"))
+        .withColumn("_source_file_name", functions.col("_stream_source_file_name"))
+        .withColumn("_source_file_size", functions.col("_stream_source_file_size"))
+        .withColumn(
+            "_source_file_modified_at",
+            functions.col("_stream_source_file_modified_at").cast("string"),
+        )
         .withColumn("_file_checksum", functions.lit(None).cast("string"))
         .withColumn("_ingested_at", functions.current_timestamp())
         .withColumn("_pipeline_run_id", functions.lit(f"stream-{dataset_name}"))
         .withColumn("_batch_id", functions.lit(str(batch_id)))
         .withColumn("_schema_version", functions.lit(1))
+        .drop(*stream_metadata_columns)
     )
 
 
