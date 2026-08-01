@@ -1,0 +1,56 @@
+rules:
+  - rule_id: ORD-001
+    dataset_name: silver_orders
+    column_name: order_id
+    rule_type: not_null
+    rule_expression: order_id IS NOT NULL
+    severity: CRITICAL
+    threshold: 0
+    action: quarantine
+    is_active: true
+    description: Every order must have a business key.
+    owner: data_engineering
+  - rule_id: ORD-002
+    dataset_name: silver_orders
+    column_name: currency
+    rule_type: accepted_values
+    rule_expression: currency IN ('USD', 'EUR', 'GBP', 'INR')
+    severity: ERROR
+    threshold: 0.01
+    action: quarantine
+    is_active: true
+    description: Orders must use an approved ISO currency.
+    owner: finance_analytics
+  - rule_id: ORD-003
+    dataset_name: silver_orders
+    column_name: net_amount
+    rule_type: consistency
+    rule_expression: abs(net_amount - (gross_amount + tax_amount + shipping_amount - discount_amount)) <= 0.01
+    severity: CRITICAL
+    threshold: 0
+    action: fail_pipeline
+    is_active: true
+    description: Order monetary components must reconcile to net amount.
+    owner: finance_analytics
+  - rule_id: RET-001
+    dataset_name: silver_returns
+    column_name: return_quantity
+    rule_type: range
+    rule_expression: return_quantity > 0
+    severity: ERROR
+    threshold: 0
+    action: quarantine
+    is_active: true
+    description: Return quantity must be positive.
+    owner: retail_operations
+  - rule_id: EVT-001
+    dataset_name: silver_customer_events
+    column_name: event_id
+    rule_type: unique
+    rule_expression: event_id IS UNIQUE WITHIN WATERMARK
+    severity: ERROR
+    threshold: 0
+    action: quarantine
+    is_active: true
+    description: Streaming event identifiers must be unique.
+    owner: digital_analytics

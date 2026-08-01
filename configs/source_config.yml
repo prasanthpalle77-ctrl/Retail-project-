@@ -1,0 +1,61 @@
+sources:
+  customers:
+    format: csv
+    load_type: cdc
+    business_keys: [customer_id]
+    event_timestamp: updated_at
+  products:
+    format: csv
+    load_type: cdc
+    business_keys: [product_id]
+    event_timestamp: updated_at
+  stores:
+    format: csv
+    load_type: cdc
+    business_keys: [store_id]
+    event_timestamp: updated_at
+  suppliers:
+    format: csv
+    load_type: cdc
+    business_keys: [supplier_id]
+    event_timestamp: updated_at
+  orders:
+    format: json
+    load_type: incremental
+    business_keys: [order_id]
+    event_timestamp: updated_at
+  order_items:
+    format: json
+    load_type: incremental
+    business_keys: [order_item_id]
+    event_timestamp: updated_at
+  payments:
+    format: json
+    load_type: incremental
+    business_keys: [payment_id]
+    event_timestamp: updated_at
+  inventory:
+    format: json
+    load_type: streaming
+    business_keys: [inventory_event_id]
+    event_timestamp: event_timestamp
+  returns:
+    format: json
+    load_type: incremental
+    business_keys: [return_id]
+    event_timestamp: return_timestamp
+  promotions:
+    format: csv
+    load_type: snapshot
+    business_keys: [promotion_id]
+    event_timestamp: end_date
+  shipments:
+    format: json
+    load_type: incremental
+    business_keys: [shipment_id]
+    event_timestamp: delivered_timestamp
+  customer_events:
+    format: json
+    load_type: streaming
+    business_keys: [event_id]
+    event_timestamp: event_timestamp

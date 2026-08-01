@@ -1,0 +1,29 @@
+kpis:
+  gross_sales:
+    grain: [date, channel]
+    formula: SUM(gross_amount) for non-cancelled orders
+    owner: finance_analytics
+  net_sales:
+    grain: [date, channel]
+    formula: SUM(gross_amount - discount_amount - refund_amount)
+    owner: finance_analytics
+  net_revenue:
+    grain: [date, channel]
+    formula: gross_sales + tax + shipping_revenue - discounts - refunds
+    owner: finance_analytics
+  average_order_value:
+    grain: [date, channel]
+    formula: net_sales / distinct completed orders
+    owner: sales_analytics
+  return_rate:
+    grain: [date, product]
+    formula: returned_units / sold_units
+    owner: retail_operations
+  conversion_rate:
+    grain: [date, device_type]
+    formula: sessions_with_purchase / eligible_sessions
+    owner: digital_analytics
+  stockout_rate:
+    grain: [date, store]
+    formula: out_of_stock_product_store_observations / total_product_store_observations
+    owner: inventory_operations

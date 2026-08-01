@@ -1,0 +1,17 @@
+application:
+  environment: prod
+  log_level: INFO
+
+storage:
+  mode: databricks
+  root: /Volumes/novaretail_prod/platform/data
+
+spark:
+  app_name: NovaRetailProduction
+  shuffle_partitions: 200
+
+databricks:
+  catalog: novaretail_prod
+
+pipeline:
+  fail_on_critical_quality_rule: true

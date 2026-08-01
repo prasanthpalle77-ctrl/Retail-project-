@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Virtual environments and secrets
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# IDE and operating system
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Generated retail data and local Spark state
+data/generated/**
+data/landing/**
+data/checkpoints/**
+data/quarantine/**
+data/warehouse/**
+spark-warehouse/
+metastore_db/
+derby.log
+
+# Runtime output
+logs/
+tmp/
+dist/
+build/
+
+# Databricks local state
+.databricks/
+.bundle/
+
+# Preserve documented directory placeholders
+!data/generated/.gitkeep
+!data/landing/.gitkeep
+!data/checkpoints/.gitkeep
+!data/quarantine/.gitkeep
+!data/warehouse/.gitkeep
