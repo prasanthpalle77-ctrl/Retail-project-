@@ -18,12 +18,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--manifest-root", type=Path, default=Path("data/landing/_manifests"))
     parser.add_argument("--bronze-root", type=Path, default=None)
     parser.add_argument("--environment", default="dev")
+    parser.add_argument("--project-root", type=Path, default=None)
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
-    settings = load_settings(args.environment)
+    settings = load_settings(args.environment, args.project_root)
     bronze_root = args.bronze_root or Path(settings["storage"]["bronze"])
     manifests = sorted(args.manifest_root.glob(f"*/{args.batch_id}/*.manifest.json"))
     if not manifests:

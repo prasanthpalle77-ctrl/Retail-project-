@@ -20,12 +20,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-files-per-trigger", type=int, default=1)
     parser.add_argument("--continuous", action="store_true")
     parser.add_argument("--processing-time-seconds", type=int, default=5)
+    parser.add_argument("--project-root", type=Path, default=None)
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
-    settings = load_settings(args.environment)
+    settings = load_settings(args.environment, args.project_root)
     lateness = args.allowed_lateness_hours
     if lateness is None:
         lateness = int(settings["pipeline"]["allowed_lateness_hours"])

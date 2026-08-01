@@ -48,6 +48,8 @@ resources:
               - ${var.volume_root}/warehouse/bronze
               - --environment
               - ${var.environment}
+              - --project-root
+              - ${workspace.file_path}
         - task_key: silver
           depends_on:
             - task_key: bronze
@@ -63,6 +65,8 @@ resources:
               - ${var.environment}
               - --rules
               - ${workspace.file_path}/configs/data_quality_rules.yml
+              - --project-root
+              - ${workspace.file_path}
         - task_key: gold
           depends_on:
             - task_key: silver
@@ -76,6 +80,8 @@ resources:
               - ${var.environment}
               - --kpi-catalog
               - ${workspace.file_path}/configs/kpi_definitions.yml
+              - --project-root
+              - ${workspace.file_path}
       environments:
         - environment_key: default
           spec:
@@ -117,6 +123,8 @@ resources:
               - customer-events
               - --max-files-per-trigger
               - "10"
+              - --project-root
+              - ${workspace.file_path}
         - task_key: inventory_events
           depends_on:
             - task_key: bootstrap_governance
@@ -132,6 +140,8 @@ resources:
               - inventory-events
               - --max-files-per-trigger
               - "10"
+              - --project-root
+              - ${workspace.file_path}
       environments:
         - environment_key: default
           spec:
@@ -153,6 +163,9 @@ resources:
           environment_key: default
           spark_python_task:
             python_file: ${workspace.file_path}/scripts/evaluate_rag.py
+            parameters:
+              - --project-root
+              - ${workspace.file_path}
       environments:
         - environment_key: default
           spec:

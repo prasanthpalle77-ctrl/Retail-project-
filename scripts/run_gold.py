@@ -18,12 +18,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--run-id", default=None)
     parser.add_argument("--environment", default="dev")
     parser.add_argument("--kpi-catalog", type=Path, default=Path("configs/kpi_definitions.yml"))
+    parser.add_argument("--project-root", type=Path, default=None)
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
-    settings = load_settings(args.environment)
+    settings = load_settings(args.environment, args.project_root)
     run_id = args.run_id or datetime.now(UTC).strftime("gold-%Y%m%dT%H%M%S%fZ")
     spark = create_spark_session(settings)
     try:

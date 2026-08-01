@@ -14,6 +14,15 @@ class BundleValidationError(ValueError):
     """Raised when a local bundle invariant is violated."""
 
 
+PROJECT_ROOT_ENTRYPOINTS = {
+    "scripts/evaluate_rag.py",
+    "scripts/run_bronze_batch.py",
+    "scripts/run_gold.py",
+    "scripts/run_silver.py",
+    "scripts/run_stream.py",
+}
+
+
 def _mapping(value: Any, label: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise BundleValidationError(f"{label} must be a mapping.")
@@ -57,6 +66,15 @@ def _validate_task_files(root: Path, jobs: Mapping[str, Any]) -> int:
                 raise BundleValidationError(
                     f"Task {key} entrypoint must return normally on serverless compute."
                 )
+            relative_python_file = python_file.removeprefix(prefix).replace("\\", "/")
+            if relative_python_file in PROJECT_ROOT_ENTRYPOINTS:
+                parameters = python_task.get("parameters", [])
+                if not isinstance(parameters, list) or not all(
+                    value in parameters for value in ("--project-root", "${workspace.file_path}")
+                ):
+                    raise BundleValidationError(
+                        f"Task {key} must receive the synced bundle path as --project-root."
+                    )
             if task.get("environment_key") != "default":
                 raise BundleValidationError(f"Task {key} must select the serverless environment.")
             dependency_keys = {
