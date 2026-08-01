@@ -80,6 +80,7 @@ def test_customer_stream_checkpoint_replay_and_late_quarantine(tmp_path: Path) -
         dataset_name="customer_events",
         source_path=source,
         checkpoint_path=tmp_path / "checkpoints" / "customer",
+        bronze_root=tmp_path / "bronze",
         silver_root=tmp_path / "silver",
         gold_root=tmp_path / "gold",
         quarantine_root=tmp_path / "quarantine",
@@ -118,6 +119,11 @@ def test_customer_stream_checkpoint_replay_and_late_quarantine(tmp_path: Path) -
         silver_count = (
             spark.read.format("delta").load(str(tmp_path / "silver" / "customer_events")).count()
         )
+        bronze_count = (
+            spark.read.format("delta")
+            .load(str(tmp_path / "bronze" / "customer_events_streaming"))
+            .count()
+        )
         late_count = (
             spark.read.format("delta")
             .load(str(tmp_path / "quarantine" / "stream_late" / "customer_events"))
@@ -137,6 +143,7 @@ def test_customer_stream_checkpoint_replay_and_late_quarantine(tmp_path: Path) -
         spark.stop()
 
     assert silver_count == 3
+    assert bronze_count == 4
     assert late_count == 1
     assert audit_count == 3
     assert audit_totals["sum(rows_read)"] == 6
@@ -168,6 +175,7 @@ def test_inventory_stream_updates_latest_health_snapshot(tmp_path: Path) -> None
         dataset_name="inventory_events",
         source_path=source,
         checkpoint_path=tmp_path / "checkpoints" / "inventory",
+        bronze_root=tmp_path / "bronze",
         silver_root=tmp_path / "silver",
         gold_root=tmp_path / "gold",
         quarantine_root=tmp_path / "quarantine",
@@ -185,6 +193,11 @@ def test_inventory_stream_updates_latest_health_snapshot(tmp_path: Path) -> None
         event_count = (
             spark.read.format("delta").load(str(tmp_path / "silver" / "inventory_events")).count()
         )
+        bronze_count = (
+            spark.read.format("delta")
+            .load(str(tmp_path / "bronze" / "inventory_events_streaming"))
+            .count()
+        )
         audit_count = (
             spark.read.format("delta")
             .load(str(tmp_path / "silver" / "_stream_batch_audit"))
@@ -194,6 +207,7 @@ def test_inventory_stream_updates_latest_health_snapshot(tmp_path: Path) -> None
         spark.stop()
 
     assert event_count == 3
+    assert bronze_count == 3
     assert audit_count == 2
     assert health.product_observations == 2
     assert health.stockout_observations == 2

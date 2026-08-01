@@ -8,7 +8,8 @@ Milestone 5 processes customer behavior and inventory events continuously from f
 
 ```mermaid
 flowchart LR
-    J["Atomic JSON micro-batches"] --> S["Explicit streaming schema"]
+    J["Atomic JSON micro-batches"] --> B["Replay-safe Streaming Bronze"]
+    B --> S["Explicit Silver schema"]
     S --> W["Event-time watermark"]
     W --> D["Business-key deduplication"]
     D --> L{"Older than prior watermark?"}
@@ -29,6 +30,7 @@ flowchart LR
 ## Effectively-once guarantees
 
 - The checkpoint records files already consumed by each query.
+- Raw events merge into `bronze/<dataset>_streaming` by a payload-derived record ID before any quality or lateness decision.
 - `maxFilesPerTrigger` bounds local micro-batches.
 - Business event IDs are the target merge keys, so losing a checkpoint and replaying source files does not duplicate Silver state.
 - Canonical record hashes distinguish exact replays from legitimate updates to an existing event ID.

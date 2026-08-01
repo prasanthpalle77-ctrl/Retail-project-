@@ -241,6 +241,7 @@ def process_stream_batch(
     stream_name: str,
     dataset_name: str,
     allowed_lateness_hours: int,
+    bronze_root: Path,
     silver_root: Path,
     gold_root: Path,
     quarantine_root: Path,
@@ -256,9 +257,26 @@ def process_stream_batch(
         raise ValueError("allowed_lateness_hours cannot be negative.")
     spec = SILVER_SPECS[dataset_name]
     rows_read = int(batch_frame.count())
-    standardized = standardize_bronze(
-        _with_bronze_metadata(batch_frame, dataset_name, batch_id), dataset_name
+    bronze = _with_bronze_metadata(batch_frame, dataset_name, batch_id)
+    bronze = bronze.withColumn(
+        "_stream_record_id",
+        functions.sha2(
+            functions.concat_ws(
+                "|",
+                functions.lit(dataset_name),
+                *[functions.col(key) for key in spec.business_keys],
+                functions.col("_record_hash"),
+            ),
+            256,
+        ),
     )
+    merge_insert_or_update(
+        spark,
+        bronze.dropDuplicates(["_stream_record_id"]),
+        bronze_root / f"{dataset_name}_streaming",
+        identifier="_stream_record_id",
+    )
+    standardized = standardize_bronze(bronze.drop("_stream_record_id"), dataset_name)
     deduplicated = deduplicate_latest(standardized, dataset_name).cache()
     deduplicated_rows = int(deduplicated.count())
     within_duplicates = rows_read - deduplicated_rows

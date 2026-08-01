@@ -34,6 +34,7 @@ def main() -> int:
         dataset_name=args.dataset,
         source_path=args.source_path,
         checkpoint_path=Path(settings["storage"]["checkpoints"]) / stream_name,
+        bronze_root=Path(settings["storage"]["bronze"]),
         silver_root=Path(settings["storage"]["silver"]),
         gold_root=Path(settings["storage"]["gold"]),
         quarantine_root=Path(settings["storage"]["quarantine"]),

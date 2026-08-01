@@ -16,6 +16,7 @@ def test_streaming_config_rejects_invalid_controls(tmp_path: object) -> None:
             dataset_name="customer_events",
             source_path=tmp_path / "source",
             checkpoint_path=tmp_path / "checkpoint",
+            bronze_root=tmp_path / "bronze",
             silver_root=tmp_path / "silver",
             gold_root=tmp_path / "gold",
             quarantine_root=tmp_path / "quarantine",

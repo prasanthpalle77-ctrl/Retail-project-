@@ -18,6 +18,7 @@ class StreamingQueryConfig:
     dataset_name: str
     source_path: Path
     checkpoint_path: Path
+    bronze_root: Path
     silver_root: Path
     gold_root: Path
     quarantine_root: Path
@@ -59,6 +60,7 @@ def start_file_stream(spark: Any, config: StreamingQueryConfig) -> Any:
             stream_name=stream_name,
             dataset_name=config.dataset_name,
             allowed_lateness_hours=config.allowed_lateness_hours,
+            bronze_root=config.bronze_root,
             silver_root=config.silver_root,
             gold_root=config.gold_root,
             quarantine_root=config.quarantine_root,
