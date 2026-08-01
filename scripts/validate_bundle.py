@@ -75,6 +75,16 @@ def _validate_task_files(root: Path, jobs: Mapping[str, Any]) -> int:
                     raise BundleValidationError(
                         f"Task {key} must receive the synced bundle path as --project-root."
                     )
+                if relative_python_file == "scripts/run_stream.py" and not all(
+                    value in parameters
+                    for value in (
+                        "--rules",
+                        "${workspace.file_path}/configs/data_quality_rules.yml",
+                    )
+                ):
+                    raise BundleValidationError(
+                        f"Streaming task {key} must receive the synced quality rules path."
+                    )
             if task.get("environment_key") != "default":
                 raise BundleValidationError(f"Task {key} must select the serverless environment.")
             dependency_keys = {

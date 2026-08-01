@@ -123,6 +123,8 @@ resources:
               - customer-events
               - --max-files-per-trigger
               - "10"
+              - --rules
+              - ${workspace.file_path}/configs/data_quality_rules.yml
               - --project-root
               - ${workspace.file_path}
         - task_key: inventory_events
@@ -140,6 +142,8 @@ resources:
               - inventory-events
               - --max-files-per-trigger
               - "10"
+              - --rules
+              - ${workspace.file_path}/configs/data_quality_rules.yml
               - --project-root
               - ${workspace.file_path}
       environments:
