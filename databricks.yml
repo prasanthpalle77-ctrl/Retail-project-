@@ -29,6 +29,25 @@ sync:
     - scripts/**
     - src/**
     - pyproject.toml
+  exclude:
+    - .agents/**
+    - .cache/**
+    - .git/**
+    - .mypy_cache/**
+    - .pytest_cache/**
+    - .ruff_cache/**
+    - .runtime/**
+    - .venv/**
+    - .venv-wsl/**
+    - data/checkpoints/**
+    - data/generated/**
+    - data/index/**
+    - data/landing/**
+    - data/quarantine/**
+    - data/warehouse/**
+    - dist/**
+    - logs/**
+    - tmp/**
 
 targets:
   dev:

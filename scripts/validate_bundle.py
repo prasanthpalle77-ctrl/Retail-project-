@@ -67,11 +67,16 @@ def _validate_task_files(root: Path, jobs: Mapping[str, Any]) -> int:
             task_count += 1
         _assert_acyclic(job_key, dependencies)
         environments = job.get("environments", [])
-        if not any(
-            isinstance(item, dict) and item.get("environment_key") == "default"
+        defaults = [
+            item
             for item in environments
-        ):
+            if isinstance(item, dict) and item.get("environment_key") == "default"
+        ]
+        if not defaults:
             raise BundleValidationError(f"Job {job_key} needs the default environment.")
+        default_spec = _mapping(defaults[0].get("spec"), f"default environment in {job_key}")
+        if "dist/*.whl" not in default_spec.get("dependencies", []):
+            raise BundleValidationError(f"Job {job_key} must install the built deployment wheel.")
     return task_count
 
 
