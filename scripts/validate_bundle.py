@@ -50,8 +50,13 @@ def _validate_task_files(root: Path, jobs: Mapping[str, Any]) -> int:
             python_file = str(python_task.get("python_file", ""))
             if not python_file.startswith(prefix):
                 raise BundleValidationError(f"Task {key} must use a synced workspace Python file.")
-            if not (root / python_file.removeprefix(prefix)).is_file():
+            local_python_file = root / python_file.removeprefix(prefix)
+            if not local_python_file.is_file():
                 raise BundleValidationError(f"Task {key} references missing file: {python_file}")
+            if "raise SystemExit(main())" in local_python_file.read_text(encoding="utf-8"):
+                raise BundleValidationError(
+                    f"Task {key} entrypoint must return normally on serverless compute."
+                )
             if task.get("environment_key") != "default":
                 raise BundleValidationError(f"Task {key} must select the serverless environment.")
             dependency_keys = {
