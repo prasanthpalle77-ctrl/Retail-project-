@@ -10,11 +10,12 @@ The repository is intentionally local-first. Core logic can be developed and tes
 - Phase 2 repository foundation: complete.
 - Milestone 2 synthetic sources, immutable Landing, and Delta Bronze: complete.
 - Milestone 3 typed Silver, quality quarantine, CDC merge, and SCD Type 2: complete.
-- Streaming, Gold analytics, RAG, and Databricks deployment: planned in later milestones.
+- Milestone 4 Gold dimensions, facts, aggregates, KPIs, and reconciliation: implemented.
+- Streaming, RAG, and Databricks deployment: planned in later milestones.
 
 See [docs/phase_1_plan.md](docs/phase_1_plan.md) for the full architecture, requirements, data model, controls, milestones, and acceptance checklist.
 
-Implementation details and reproducible proofs are documented in [docs/landing_and_bronze.md](docs/landing_and_bronze.md) and [docs/silver_quality_and_scd.md](docs/silver_quality_and_scd.md).
+Implementation details and reproducible proofs are documented in [docs/landing_and_bronze.md](docs/landing_and_bronze.md), [docs/silver_quality_and_scd.md](docs/silver_quality_and_scd.md), and [docs/gold_analytics.md](docs/gold_analytics.md).
 
 ## Solution flow
 
@@ -129,6 +130,16 @@ wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .ve
 ```
 
 Silver uses executable YAML rules for row validity and cross-table relationships. Failed rows retain their rule IDs in Delta quarantine; rule-level counts and failure percentages are persisted under the Silver quality-results table.
+
+## Publish Gold analytics
+
+Build conformed dimensions, facts, aggregates, certified KPIs, and reconciliation evidence:
+
+```powershell
+wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .venv-wsl/bin/python scripts/run_gold.py --run-id GOLD-DEMO-SEED43"
+```
+
+The KPI catalog is maintained in `configs/kpi_definitions.yml`; example certified queries are available in `sql/gold/example_analytics.sql`.
 
 ## Repository conventions
 
