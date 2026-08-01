@@ -15,6 +15,7 @@ class BundleValidationError(ValueError):
 
 
 PROJECT_ROOT_ENTRYPOINTS = {
+    "scripts/ask_databricks_rag.py",
     "scripts/evaluate_rag.py",
     "scripts/run_bronze_batch.py",
     "scripts/run_gold.py",
@@ -157,7 +158,13 @@ def validate_bundle(root: Path) -> dict[str, Any]:
             if key in jobs:
                 raise BundleValidationError(f"Duplicate job key: {key}")
             jobs[key] = value
-    required_jobs = {"retail_batch_pipeline", "retail_streaming_pipeline", "rag_evaluation"}
+    required_jobs = {
+        "rag_copilot_query",
+        "rag_evaluation",
+        "retail_batch_pipeline",
+        "retail_big_data_load",
+        "retail_streaming_pipeline",
+    }
     if set(jobs) != required_jobs:
         raise BundleValidationError(f"Expected jobs: {sorted(required_jobs)}")
     task_count = _validate_task_files(root, jobs)

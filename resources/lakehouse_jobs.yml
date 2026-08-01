@@ -176,3 +176,98 @@ resources:
             environment_version: "3"
             dependencies:
               - ../dist/*.whl
+
+    retail_big_data_load:
+      name: novaretail-${bundle.target}-big-data-load
+      description: Generate and register the distributed 5M-order retail model.
+      max_concurrent_runs: 1
+      timeout_seconds: 14400
+      queue:
+        enabled: true
+      parameters:
+        - name: order_count
+          default: "5000000"
+        - name: items_per_order
+          default: "2"
+        - name: customer_count
+          default: "500000"
+        - name: product_count
+          default: "100000"
+        - name: store_count
+          default: "1000"
+        - name: inventory_event_count
+          default: "1000000"
+        - name: batch_id
+          default: bigdata_v1
+      tags:
+        application: novaretail
+        environment: ${bundle.target}
+        workload: big-data-generation
+      tasks:
+        - task_key: bootstrap_governance
+          environment_key: default
+          spark_python_task:
+            python_file: ${workspace.file_path}/scripts/bootstrap_databricks.py
+            parameters:
+              - --catalog
+              - ${var.catalog}
+        - task_key: generate_and_register
+          depends_on:
+            - task_key: bootstrap_governance
+          environment_key: default
+          spark_python_task:
+            python_file: ${workspace.file_path}/scripts/generate_big_data_databricks.py
+            parameters:
+              - --catalog
+              - ${var.catalog}
+              - --orders
+              - "{{job.parameters.order_count}}"
+              - --items-per-order
+              - "{{job.parameters.items_per_order}}"
+              - --customers
+              - "{{job.parameters.customer_count}}"
+              - --products
+              - "{{job.parameters.product_count}}"
+              - --stores
+              - "{{job.parameters.store_count}}"
+              - --inventory-events
+              - "{{job.parameters.inventory_event_count}}"
+              - --batch-id
+              - "{{job.parameters.batch_id}}"
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "3"
+            dependencies:
+              - ../dist/*.whl
+
+    rag_copilot_query:
+      name: novaretail-${bundle.target}-rag-copilot-query
+      description: Ask governed policy or certified Gold KPI questions.
+      max_concurrent_runs: 1
+      timeout_seconds: 1800
+      parameters:
+        - name: question
+          default: What are the latest net sales and average order value by channel?
+      tags:
+        application: novaretail
+        environment: ${bundle.target}
+        workload: rag-copilot
+      tasks:
+        - task_key: answer_question
+          environment_key: default
+          spark_python_task:
+            python_file: ${workspace.file_path}/scripts/ask_databricks_rag.py
+            parameters:
+              - --question
+              - "{{job.parameters.question}}"
+              - --catalog
+              - ${var.catalog}
+              - --project-root
+              - ${workspace.file_path}
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "3"
+            dependencies:
+              - ../dist/*.whl

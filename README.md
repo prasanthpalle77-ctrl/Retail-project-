@@ -15,10 +15,11 @@ The repository is intentionally local-first. Core logic can be developed and tes
 - Milestone 6 local citation-grounded RAG copilot and safe Gold SQL routing: complete.
 - Milestone 7 Databricks bundle, jobs, OIDC delivery, and runbooks: complete.
 - Live Databricks development deployment and batch, streaming, and RAG acceptance: complete.
+- Distributed 5M-order data load, registered Unity Catalog tables, arrival monitoring, and live Gold RAG query job: implemented.
 
 See [docs/phase_1_plan.md](docs/phase_1_plan.md) for the full architecture, requirements, data model, controls, milestones, and acceptance checklist.
 
-Implementation details and reproducible proofs are documented in [docs/landing_and_bronze.md](docs/landing_and_bronze.md), [docs/silver_quality_and_scd.md](docs/silver_quality_and_scd.md), [docs/gold_analytics.md](docs/gold_analytics.md), [docs/structured_streaming.md](docs/structured_streaming.md), [docs/rag_copilot.md](docs/rag_copilot.md), and [docs/databricks_deployment.md](docs/databricks_deployment.md).
+Implementation details and reproducible proofs are documented in [docs/landing_and_bronze.md](docs/landing_and_bronze.md), [docs/silver_quality_and_scd.md](docs/silver_quality_and_scd.md), [docs/gold_analytics.md](docs/gold_analytics.md), [docs/structured_streaming.md](docs/structured_streaming.md), [docs/rag_copilot.md](docs/rag_copilot.md), [docs/databricks_deployment.md](docs/databricks_deployment.md), and [docs/big_data_rag_operations.md](docs/big_data_rag_operations.md).
 
 ## Solution flow
 

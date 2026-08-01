@@ -28,8 +28,8 @@ def test_project_bundle_has_all_targets_jobs_and_valid_task_graphs() -> None:
         "bundle": "novaretail",
         "targets": ["dev", "prod", "staging"],
         "resource_files": 1,
-        "jobs": 3,
-        "tasks": 9,
+        "jobs": 5,
+        "tasks": 12,
     }
 
 
