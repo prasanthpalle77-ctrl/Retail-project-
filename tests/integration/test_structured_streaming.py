@@ -128,10 +128,10 @@ def test_customer_stream_checkpoint_replay_and_late_quarantine(tmp_path: Path) -
             {"rows_read": "sum", "within_batch_duplicates": "sum", "replayed_rows": "sum"}
         ).first()
         audit_count = audits.count()
-        funnel_count = (
+        funnel = (
             spark.read.format("delta")
             .load(str(tmp_path / "gold" / "streaming_channel_funnel"))
-            .count()
+            .first()
         )
     finally:
         spark.stop()
@@ -142,7 +142,9 @@ def test_customer_stream_checkpoint_replay_and_late_quarantine(tmp_path: Path) -
     assert audit_totals["sum(rows_read)"] == 6
     assert audit_totals["sum(within_batch_duplicates)"] == 1
     assert audit_totals["sum(replayed_rows)"] == 1
-    assert funnel_count == 2
+    assert funnel.eligible_sessions == 2
+    assert funnel.purchase_sessions == 1
+    assert funnel.conversion_rate == 0.5
 
 
 def test_inventory_stream_updates_latest_health_snapshot(tmp_path: Path) -> None:
