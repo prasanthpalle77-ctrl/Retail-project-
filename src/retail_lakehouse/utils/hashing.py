@@ -45,3 +45,9 @@ def record_hash(record: Mapping[str, Any], algorithm: str = "sha256") -> str:
         raise ValueError(f"Unsupported hash algorithm: {algorithm}") from exc
     digest.update(canonical_record(record).encode("utf-8"))
     return digest.hexdigest()
+
+
+def sha256_text(value: str) -> str:
+    """Return a stable SHA-256 identifier for an already-canonical string."""
+
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()

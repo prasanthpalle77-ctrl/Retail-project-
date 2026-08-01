@@ -9,9 +9,12 @@ The repository is intentionally local-first. Core logic can be developed and tes
 - Phase 1 architecture and implementation plan: complete.
 - Phase 2 repository foundation: complete.
 - Milestone 2 synthetic sources, immutable Landing, and Delta Bronze: complete.
-- Silver, streaming, Gold analytics, RAG, and Databricks deployment: planned in later milestones.
+- Milestone 3 typed Silver, quality quarantine, CDC merge, and SCD Type 2: complete.
+- Streaming, Gold analytics, RAG, and Databricks deployment: planned in later milestones.
 
 See [docs/phase_1_plan.md](docs/phase_1_plan.md) for the full architecture, requirements, data model, controls, milestones, and acceptance checklist.
+
+Implementation details and reproducible proofs are documented in [docs/landing_and_bronze.md](docs/landing_and_bronze.md) and [docs/silver_quality_and_scd.md](docs/silver_quality_and_scd.md).
 
 ## Solution flow
 
@@ -115,6 +118,17 @@ wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .ve
 ```
 
 The first Spark start retrieves the matching open-source Delta Lake runtime JARs from Maven Central. Later runs use the local dependency cache.
+
+## Run typed Silver and quality controls
+
+Process all 12 datasets in dependency order and reconcile the results:
+
+```powershell
+wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .venv-wsl/bin/python scripts/run_silver.py --dataset all --run-id SILVER-DEMO-SEED43"
+wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .venv-wsl/bin/python scripts/verify_silver.py SILVER-DEMO-SEED43"
+```
+
+Silver uses executable YAML rules for row validity and cross-table relationships. Failed rows retain their rule IDs in Delta quarantine; rule-level counts and failure percentages are persisted under the Silver quality-results table.
 
 ## Repository conventions
 

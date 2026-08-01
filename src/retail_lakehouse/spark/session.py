@@ -29,8 +29,11 @@ def create_spark_session(settings: dict[str, Any]) -> Any:
     builder = SparkSession.builder.appName(spark_settings["app_name"])
     if master := spark_settings.get("master"):
         builder = builder.master(str(master))
-    builder = builder.config(
-        "spark.sql.shuffle.partitions", str(spark_settings.get("shuffle_partitions", 4))
+    shuffle_partitions = str(spark_settings.get("shuffle_partitions", 4))
+    builder = (
+        builder.config("spark.sql.shuffle.partitions", shuffle_partitions)
+        .config("spark.default.parallelism", shuffle_partitions)
+        .config("spark.databricks.delta.snapshotPartitions", shuffle_partitions)
     )
 
     if spark_settings.get("enable_delta", False):

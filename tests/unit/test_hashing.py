@@ -3,7 +3,7 @@ from decimal import Decimal
 
 import pytest
 
-from retail_lakehouse.utils.hashing import canonical_record, record_hash
+from retail_lakehouse.utils.hashing import canonical_record, record_hash, sha256_text
 
 
 def test_hash_is_independent_of_mapping_order() -> None:
@@ -24,3 +24,8 @@ def test_naive_and_utc_datetime_hash_identically() -> None:
 def test_unsupported_hash_algorithm_is_clear() -> None:
     with pytest.raises(ValueError, match="Unsupported hash algorithm"):
         record_hash({"id": 1}, algorithm="not-a-hash")
+
+
+def test_text_identifier_is_stable() -> None:
+    assert sha256_text("run|orders|ORD-001") == sha256_text("run|orders|ORD-001")
+    assert sha256_text("run|orders|ORD-001") != sha256_text("run|orders|ORD-002")
