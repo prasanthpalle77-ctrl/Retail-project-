@@ -50,3 +50,20 @@ def test_policy_return_question_does_not_route_to_return_rate_sql() -> None:
     catalog = ApprovedSqlCatalog.load(root / "configs" / "rag_sql_templates.yml")
 
     assert catalog.match("What is the customer return policy?") is None
+
+
+@pytest.mark.parametrize(
+    ("question", "template_id"),
+    [
+        ("Has the data arrived?", "data_arrival"),
+        ("Show all KPIs and their meanings", "kpi_summary"),
+    ],
+)
+def test_catalog_routes_operations_questions(question: str, template_id: str) -> None:
+    root = Path(__file__).resolve().parents[2]
+    catalog = ApprovedSqlCatalog.load(root / "configs" / "rag_sql_templates.yml")
+
+    template = catalog.match(question)
+
+    assert template is not None
+    assert template.template_id == template_id

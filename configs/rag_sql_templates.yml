@@ -40,3 +40,23 @@ templates:
       FROM agg_inventory_health
       ORDER BY date_key DESC, store_key
       LIMIT 30
+  data_arrival:
+    description: Latest expected-versus-actual row checks for the retail lakehouse.
+    intent_phrases: [data arrived, data arrival, arrival status, row count check]
+    allowed_tables: [governance.data_arrival_status]
+    max_rows: 50
+    sql: |
+      SELECT layer, object_name, expected_rows, actual_rows, arrival_status, batch_id, checked_at
+      FROM governance.data_arrival_status
+      ORDER BY layer, object_name
+      LIMIT 50
+  kpi_summary:
+    description: Certified retail KPI values and their business use.
+    intent_phrases: [all kpis, kpi summary, kpi meanings, business use of kpis]
+    allowed_tables: [kpi_summary]
+    max_rows: 20
+    sql: |
+      SELECT metric_name, metric_value, business_use, calculated_at
+      FROM kpi_summary
+      ORDER BY metric_name
+      LIMIT 20

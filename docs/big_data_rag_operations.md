@@ -89,6 +89,13 @@ This prevents the assistant from inventing policies or calculating business metr
 
 To run it, open **Workflows**, select **novaretail-dev-rag-copilot-query**, click **Run now with different parameters**, enter the question, and run the job. The task output contains the answer, citations, approved SQL, and result rows. The RAG job never modifies a table.
 
+Useful governed questions include:
+
+- `Has the data arrived?`
+- `Show all KPIs and their meanings`
+- `What are the latest net sales and average order value by channel?`
+- `What is the latest stockout rate?`
+
 ## Example SQL queries
 
 ```sql
