@@ -58,7 +58,7 @@ strict = true
 packages = ["retail_lakehouse"]
 
 [[tool.mypy.overrides]]
-module = ["delta", "pyspark", "pyspark.*"]
+module = ["delta", "delta.*", "pyspark", "pyspark.*"]
 ignore_missing_imports = true
 
 [tool.bandit]
