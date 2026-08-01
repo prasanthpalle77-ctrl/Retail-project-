@@ -2,7 +2,7 @@
 
 NovaRetail is a production-style retail data engineering and AI portfolio project. It combines batch and streaming ingestion, Delta Lake medallion processing, dimensional analytics, data quality, observability, and a citation-grounded retail data copilot.
 
-The repository is intentionally local-first. Core logic can be developed and tested on a Windows workstation, while Databricks-specific deployment assets will be added without coupling business logic to notebooks.
+The repository is intentionally local-first. Core logic can be developed and tested on a Windows workstation, while the same packaged code deploys to Databricks without coupling business logic to notebooks.
 
 ## Current status
 
@@ -13,8 +13,8 @@ The repository is intentionally local-first. Core logic can be developed and tes
 - Milestone 4 Gold dimensions, facts, aggregates, KPIs, and reconciliation: complete.
 - Milestone 5 checkpointed customer-event and inventory streaming: complete.
 - Milestone 6 local citation-grounded RAG copilot and safe Gold SQL routing: complete.
-- Milestone 7 Databricks bundle, jobs, OIDC delivery, and runbooks: code complete.
-- Live Databricks development deployment: pending workspace configuration and authorization.
+- Milestone 7 Databricks bundle, jobs, OIDC delivery, and runbooks: complete.
+- Live Databricks development deployment and batch, streaming, and RAG acceptance: complete.
 
 See [docs/phase_1_plan.md](docs/phase_1_plan.md) for the full architecture, requirements, data model, controls, milestones, and acceptance checklist.
 
