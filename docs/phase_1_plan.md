@@ -324,7 +324,7 @@ terraform/               optional infrastructure examples
 - [x] RAG, security, testing, and CI/CD strategies defined.
 - [x] Repository structure and milestones defined.
 - [x] Synthetic data generation is runnable.
-- [ ] Batch and streaming Bronze ingestion are runnable.
+- [x] Batch and streaming Bronze ingestion are runnable.
 - [x] Silver cleaning, CDC, SCD, and quarantine are runnable.
 - [x] Gold dimensions, facts, aggregates, and KPIs are runnable.
 - [x] Audit and reconciliation tables are populated.

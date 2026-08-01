@@ -11,7 +11,7 @@ The repository is intentionally local-first. Core logic can be developed and tes
 - Milestone 2 synthetic sources, immutable Landing, and Delta Bronze: complete.
 - Milestone 3 typed Silver, quality quarantine, CDC merge, and SCD Type 2: complete.
 - Milestone 4 Gold dimensions, facts, aggregates, KPIs, and reconciliation: complete.
-- Milestone 5 checkpointed customer-event and inventory streaming: implemented.
+- Milestone 5 checkpointed customer-event and inventory streaming: complete.
 - RAG and Databricks deployment: planned in later milestones.
 
 See [docs/phase_1_plan.md](docs/phase_1_plan.md) for the full architecture, requirements, data model, controls, milestones, and acceptance checklist.
