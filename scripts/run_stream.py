@@ -48,11 +48,8 @@ def main() -> int:
         processing_time_seconds=args.processing_time_seconds,
     )
     spark = create_spark_session(settings)
-    try:
-        query = start_file_stream(spark, config)
-        query.awaitTermination()
-    finally:
-        spark.stop()
+    query = start_file_stream(spark, config)
+    query.awaitTermination()
     return 0
 
 
