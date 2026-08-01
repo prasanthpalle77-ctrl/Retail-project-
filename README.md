@@ -2,6 +2,8 @@
 
 NovaRetail is a production-style retail data engineering and AI portfolio project. It combines batch and streaming ingestion, Delta Lake medallion processing, dimensional analytics, data quality, observability, and a citation-grounded retail data copilot.
 
+Live chat interface: [NovaRetail Copilot](https://novaretail-copilot-7474648027961612.aws.databricksapps.com)
+
 The repository is intentionally local-first. Core logic can be developed and tested on a Windows workstation, while the same packaged code deploys to Databricks without coupling business logic to notebooks.
 
 ## Current status
@@ -19,7 +21,7 @@ The repository is intentionally local-first. Core logic can be developed and tes
 
 See [docs/phase_1_plan.md](docs/phase_1_plan.md) for the full architecture, requirements, data model, controls, milestones, and acceptance checklist.
 
-Implementation details and reproducible proofs are documented in [docs/landing_and_bronze.md](docs/landing_and_bronze.md), [docs/silver_quality_and_scd.md](docs/silver_quality_and_scd.md), [docs/gold_analytics.md](docs/gold_analytics.md), [docs/structured_streaming.md](docs/structured_streaming.md), [docs/rag_copilot.md](docs/rag_copilot.md), [docs/databricks_deployment.md](docs/databricks_deployment.md), and [docs/big_data_rag_operations.md](docs/big_data_rag_operations.md).
+Implementation details and reproducible proofs are documented in [docs/landing_and_bronze.md](docs/landing_and_bronze.md), [docs/silver_quality_and_scd.md](docs/silver_quality_and_scd.md), [docs/gold_analytics.md](docs/gold_analytics.md), [docs/structured_streaming.md](docs/structured_streaming.md), [docs/rag_copilot.md](docs/rag_copilot.md), [docs/rag_chat_app.md](docs/rag_chat_app.md), [docs/databricks_deployment.md](docs/databricks_deployment.md), and [docs/big_data_rag_operations.md](docs/big_data_rag_operations.md).
 
 ## Solution flow
 

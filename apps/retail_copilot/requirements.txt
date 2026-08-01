@@ -1,0 +1,4 @@
+./novaretail_lakehouse-0.1.0-py3-none-any.whl
+databricks-sdk>=0.60,<1.0
+databricks-sql-connector>=4.0,<5.0
+streamlit>=1.40,<2.0

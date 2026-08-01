@@ -4,6 +4,7 @@ from retail_lakehouse.rag.copilot import RetailCopilot
 from retail_lakehouse.rag.documents import load_documents
 from retail_lakehouse.rag.index import LexicalIndex
 from retail_lakehouse.rag.models import CopilotResponse
+from retail_lakehouse.rag.presentation import present_response
 from retail_lakehouse.rag.sql import ApprovedSqlCatalog
 
 __all__ = [
@@ -12,4 +13,5 @@ __all__ = [
     "LexicalIndex",
     "RetailCopilot",
     "load_documents",
+    "present_response",
 ]

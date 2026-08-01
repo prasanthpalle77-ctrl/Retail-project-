@@ -1,0 +1,62 @@
+{
+  "name": "novaretail-copilot",
+  "description": "Governed chat interface for NovaRetail KPIs, operations, and policies.",
+  "resources": [
+    {
+      "name": "retail-warehouse",
+      "description": "Read-only SQL compute",
+      "sql_warehouse": {
+        "id": "e9d27514fca56d48",
+        "permission": "CAN_USE"
+      }
+    },
+    {
+      "name": "daily-sales",
+      "uc_securable": {
+        "securable_full_name": "novaretail_dev.gold.retail_kpi_daily",
+        "securable_type": "TABLE",
+        "permission": "SELECT"
+      }
+    },
+    {
+      "name": "channel-funnel",
+      "uc_securable": {
+        "securable_full_name": "novaretail_dev.gold.agg_channel_funnel",
+        "securable_type": "TABLE",
+        "permission": "SELECT"
+      }
+    },
+    {
+      "name": "product-returns",
+      "uc_securable": {
+        "securable_full_name": "novaretail_dev.gold.agg_daily_product_sales",
+        "securable_type": "TABLE",
+        "permission": "SELECT"
+      }
+    },
+    {
+      "name": "inventory-health",
+      "uc_securable": {
+        "securable_full_name": "novaretail_dev.gold.agg_inventory_health",
+        "securable_type": "TABLE",
+        "permission": "SELECT"
+      }
+    },
+    {
+      "name": "kpi-summary",
+      "uc_securable": {
+        "securable_full_name": "novaretail_dev.gold.kpi_summary",
+        "securable_type": "TABLE",
+        "permission": "SELECT"
+      }
+    },
+    {
+      "name": "arrival-status",
+      "uc_securable": {
+        "securable_full_name": "novaretail_dev.governance.data_arrival_status",
+        "securable_type": "TABLE",
+        "permission": "SELECT"
+      }
+    }
+  ]
+}
