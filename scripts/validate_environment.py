@@ -8,6 +8,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from retail_lakehouse.runtime import find_java_home
+
 
 def command_version(command: str, args: list[str]) -> str | None:
     """Return the first version line or None when a command is unavailable."""
@@ -36,7 +38,18 @@ def main() -> int:
     print(f"Project root: {root}")
     print(f"Python: {platform.python_version()} ({sys.executable})")
     print(f"Git: {command_version('git', ['--version']) or 'NOT FOUND'}")
-    print(f"Java: {command_version('java', ['-version']) or 'NOT FOUND - required for Spark'}")
+    java_home = find_java_home(root)
+    java_version = command_version("java", ["-version"])
+    if java_home and not java_version:
+        java_command = (
+            java_home / "bin" / ("java.exe" if platform.system() == "Windows" else "java")
+        )
+        result = subprocess.run(
+            [str(java_command), "-version"], capture_output=True, check=False, text=True
+        )
+        java_version = (result.stdout or result.stderr).splitlines()[0]
+    print(f"Java: {java_version or 'NOT FOUND - required for Spark'}")
+    print(f"Java home: {java_home or 'NOT CONFIGURED'}")
 
     supported_python = (3, 11) <= sys.version_info[:2] < (3, 13)
     print(f"Supported Python: {'YES' if supported_python else 'NO'}")

@@ -12,7 +12,9 @@ htmlcov/
 
 # Virtual environments and secrets
 .venv/
+.venv-wsl/
 venv/
+.runtime/
 .env
 .env.*
 !.env.example

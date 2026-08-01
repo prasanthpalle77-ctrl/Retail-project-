@@ -323,7 +323,7 @@ terraform/               optional infrastructure examples
 - [x] Idempotency, CDC, and SCD strategies defined.
 - [x] RAG, security, testing, and CI/CD strategies defined.
 - [x] Repository structure and milestones defined.
-- [ ] Synthetic data generation is runnable.
+- [x] Synthetic data generation is runnable.
 - [ ] Batch and streaming Bronze ingestion are runnable.
 - [ ] Silver cleaning, CDC, SCD, and quarantine are runnable.
 - [ ] Gold dimensions, facts, aggregates, and KPIs are runnable.

@@ -30,4 +30,6 @@ jobs:
       - name: Security scan
         run: python -m bandit -c pyproject.toml -r src
       - name: Unit tests
-        run: python -m pytest --cov=retail_lakehouse --cov-report=term-missing --cov-report=xml
+        run: >-
+          python -m pytest -m "not integration and not end_to_end"
+          --cov=retail_lakehouse --cov-report=term-missing --cov-report=xml

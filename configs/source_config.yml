@@ -34,7 +34,7 @@ sources:
     load_type: incremental
     business_keys: [payment_id]
     event_timestamp: updated_at
-  inventory:
+  inventory_events:
     format: json
     load_type: streaming
     business_keys: [inventory_event_id]

@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
+
+from retail_lakehouse.runtime import configure_java
 
 
 def create_spark_session(settings: dict[str, Any]) -> Any:
@@ -11,6 +14,9 @@ def create_spark_session(settings: dict[str, Any]) -> Any:
     Imports are lazy so documentation, configuration, and non-Spark unit tests
     remain usable before Java and PySpark are installed.
     """
+
+    project_root = Path(settings["project_root"])
+    configure_java(project_root)
 
     try:
         from pyspark.sql import SparkSession

@@ -7,8 +7,9 @@ The repository is intentionally local-first. Core logic can be developed and tes
 ## Current status
 
 - Phase 1 architecture and implementation plan: complete.
-- Phase 2 repository foundation: in progress.
-- Batch, streaming, Gold analytics, RAG, and Databricks deployment: planned in later milestones.
+- Phase 2 repository foundation: complete.
+- Milestone 2 synthetic sources, immutable Landing, and Delta Bronze: complete.
+- Silver, streaming, Gold analytics, RAG, and Databricks deployment: planned in later milestones.
 
 See [docs/phase_1_plan.md](docs/phase_1_plan.md) for the full architecture, requirements, data model, controls, milestones, and acceptance checklist.
 
@@ -43,6 +44,12 @@ flowchart LR
 
 Java is not required for the initial non-Spark unit tests.
 
+Install a checksum-verified project-local Temurin 17 runtime on Windows with:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup_java.ps1
+```
+
 ## Windows setup
 
 ```powershell
@@ -58,6 +65,12 @@ Install the full local lakehouse and RAG dependencies when those milestones begi
 
 ```powershell
 pip install -r requirements.txt
+```
+
+Install only the lakehouse dependencies with:
+
+```powershell
+pip install -r requirements-lakehouse.txt
 ```
 
 Copy the environment template before running services:
@@ -79,6 +92,29 @@ settings = load_settings("dev")
 ```
 
 Set `NOVARETAIL_ENV` to `dev`, `test`, `staging`, or `prod`. Secrets are supplied separately through environment variables or Databricks secret scopes.
+
+## Generate a synthetic source batch
+
+The generator is deterministic by seed and creates customers, products, stores, suppliers, orders, order items, payments, inventory events, returns, promotions, shipments, and customer events. Invalid mode deliberately adds duplicates, broken keys, status errors, negative values, reconciliation errors, event duplication, and schema drift.
+
+```powershell
+python scripts\generate_data.py --seed 42 --customers 20 --products 15 --orders 30
+python scripts\stage_landing.py "data\generated\batch_id=20260101T000000Z_seed42"
+```
+
+Running `stage_landing.py` again reports `ALREADY_STAGED` for the same checksums and does not copy the files twice.
+
+## Run local Delta Bronze on Windows through WSL2
+
+Native Windows Spark depends on Hadoop's unavailable official `winutils.exe` binary. The supported project workflow runs Spark inside the installed Ubuntu WSL2 distribution, while generation and Landing can run from PowerShell.
+
+```powershell
+wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && python3 -m venv .venv-wsl"
+wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && .venv-wsl/bin/python -m pip install -r requirements-lakehouse.txt"
+wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .venv-wsl/bin/python scripts/run_bronze_batch.py 20260101T000000Z_seed42"
+```
+
+The first Spark start retrieves the matching open-source Delta Lake runtime JARs from Maven Central. Later runs use the local dependency cache.
 
 ## Repository conventions
 
