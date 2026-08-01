@@ -338,15 +338,19 @@ def process_stream_batch(
     checked_at = datetime.now(UTC)
     control = spark.createDataFrame(
         [
-            {
-                "stream_name": stream_name,
-                "dataset_name": dataset_name,
-                "maximum_event_timestamp": maximum,
-                "allowed_lateness_hours": allowed_lateness_hours,
-                "last_batch_id": int(batch_id),
-                "updated_at": checked_at,
-            }
-        ]
+            (
+                stream_name,
+                dataset_name,
+                maximum,
+                allowed_lateness_hours,
+                int(batch_id),
+                checked_at,
+            )
+        ],
+        schema=(
+            "stream_name string, dataset_name string, maximum_event_timestamp timestamp, "
+            "allowed_lateness_hours int, last_batch_id long, updated_at timestamp"
+        ),
     )
     merge_insert_or_update(spark, control, control_path, identifier="stream_name")
     reconciled = within_duplicates + late_rows + quality_rejected + replayed_rows + merged_rows
@@ -354,24 +358,32 @@ def process_stream_batch(
     audit_id = sha256_text(f"{stream_name}|{batch_id}")
     audit = spark.createDataFrame(
         [
-            {
-                "stream_batch_audit_id": audit_id,
-                "stream_name": stream_name,
-                "dataset_name": dataset_name,
-                "batch_id": int(batch_id),
-                "rows_read": rows_read,
-                "within_batch_duplicates": within_duplicates,
-                "late_rows": late_rows,
-                "quality_rejected_rows": quality_rejected,
-                "replayed_rows": replayed_rows,
-                "merged_rows": merged_rows,
-                "reconciled_rows": reconciled,
-                "reconciliation_status": status,
-                "maximum_event_timestamp": maximum,
-                "watermark_cutoff": watermark_cutoff,
-                "processed_at": checked_at,
-            }
-        ]
+            (
+                audit_id,
+                stream_name,
+                dataset_name,
+                int(batch_id),
+                rows_read,
+                within_duplicates,
+                late_rows,
+                quality_rejected,
+                replayed_rows,
+                merged_rows,
+                reconciled,
+                status,
+                maximum,
+                watermark_cutoff,
+                checked_at,
+            )
+        ],
+        schema=(
+            "stream_batch_audit_id string, stream_name string, dataset_name string, "
+            "batch_id long, rows_read long, within_batch_duplicates long, late_rows long, "
+            "quality_rejected_rows long, replayed_rows long, merged_rows long, "
+            "reconciled_rows long, reconciliation_status string, "
+            "maximum_event_timestamp timestamp, watermark_cutoff timestamp, "
+            "processed_at timestamp"
+        ),
     )
     merge_insert_or_update(
         spark,
