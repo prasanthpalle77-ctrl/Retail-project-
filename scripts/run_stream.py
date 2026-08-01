@@ -20,6 +20,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-files-per-trigger", type=int, default=1)
     parser.add_argument("--continuous", action="store_true")
     parser.add_argument("--processing-time-seconds", type=int, default=5)
+    parser.add_argument("--rules", type=Path, default=Path("configs/data_quality_rules.yml"))
     parser.add_argument("--project-root", type=Path, default=None)
     return parser.parse_args()
 
@@ -39,7 +40,7 @@ def main() -> int:
         silver_root=Path(settings["storage"]["silver"]),
         gold_root=Path(settings["storage"]["gold"]),
         quarantine_root=Path(settings["storage"]["quarantine"]),
-        rules_path=Path("configs/data_quality_rules.yml"),
+        rules_path=args.rules,
         stream_name=stream_name,
         allowed_lateness_hours=lateness,
         max_files_per_trigger=args.max_files_per_trigger,
