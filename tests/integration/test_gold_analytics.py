@@ -94,7 +94,10 @@ def test_gold_dimension_resolution_and_finance_kpis(tmp_path: Path) -> None:
         orders = spark.createDataFrame(
             [
                 _order("O1", "C1", "100.00", "10.00"),
-                _order("O2", "MISSING", "50.00", "0.00"),
+                {
+                    **_order("O2", "MISSING", "50.00", "0.00"),
+                    "store_id": "S1",
+                },
             ]
         )
         sales = build_fact_sales(orders, dimensions).cache()
