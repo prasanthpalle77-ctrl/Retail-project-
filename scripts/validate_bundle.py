@@ -112,7 +112,20 @@ def _assert_acyclic(job_key: str, dependencies: Mapping[str, set[str]]) -> None:
         remaining = {key: value - ready for key, value in remaining.items() if key not in ready}
 
 
+def _validate_serverless_compatibility(root: Path) -> None:
+    unsupported = (".cache(", ".persist(")
+    for path in (root / "src" / "retail_lakehouse").rglob("*.py"):
+        source = path.read_text(encoding="utf-8")
+        operation = next((item for item in unsupported if item in source), None)
+        if operation is not None:
+            relative = path.relative_to(root)
+            raise BundleValidationError(
+                f"Serverless deployment source {relative} uses unsupported {operation[:-1]}."
+            )
+
+
 def validate_bundle(root: Path) -> dict[str, Any]:
+    _validate_serverless_compatibility(root)
     bundle = _load_yaml(root / "databricks.yml")
     bundle_metadata = _mapping(bundle.get("bundle"), "bundle")
     if bundle_metadata.get("name") != "novaretail":

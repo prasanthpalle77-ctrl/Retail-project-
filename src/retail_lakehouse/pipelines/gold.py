@@ -96,10 +96,8 @@ def _sync(
     name: str,
     identifiers: tuple[str, ...],
 ) -> int:
-    cached = frame.cache()
-    count = int(cached.count())
-    synchronize_snapshot(spark, cached, gold_root / name, identifiers=identifiers)
-    cached.unpersist()
+    count = int(frame.count())
+    synchronize_snapshot(spark, frame, gold_root / name, identifiers=identifiers)
     return count
 
 

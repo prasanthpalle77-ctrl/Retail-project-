@@ -59,7 +59,7 @@ def evaluate_quality(
     evaluated = frame.withColumn(
         "_failed_rule_ids",
         functions.filter(functions.array(*failed_ids), lambda item: item.isNotNull()),
-    ).cache()
+    )
     aggregate_expressions = [functions.count(functions.lit(1)).alias("records_checked")]
     aggregate_expressions.extend(
         functions.sum(functions.when(~functions.col(name), 1).otherwise(0)).alias(name)
@@ -104,7 +104,6 @@ def evaluate_quality(
         .drop(*[name for _, name in pass_columns])
     )
     if blocking:
-        evaluated.unpersist()
         raise DataQualityError(
             f"Pipeline blocked by quality rules for {dataset_name}: {', '.join(blocking)}"
         )

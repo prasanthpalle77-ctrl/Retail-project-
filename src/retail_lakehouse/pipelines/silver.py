@@ -56,7 +56,7 @@ def run_silver_dataset(
     bronze_rows = bronze.count()
     standardized = standardize_bronze(bronze, dataset_name)
     standardized_rows = standardized.count()
-    deduplicated = deduplicate_latest(standardized, dataset_name).cache()
+    deduplicated = deduplicate_latest(standardized, dataset_name)
     deduplicated_rows = deduplicated.count()
     rules = load_quality_rules(rules_path, dataset_name)
     deduplicated, rules = enrich_reference_rules(
@@ -70,8 +70,8 @@ def run_silver_dataset(
         dataset_name=dataset_name,
     )
     reference_columns = [name for name in deduplicated.columns if name.startswith("_reference_")]
-    accepted = evaluation.accepted.drop(*reference_columns).cache()
-    quarantined = evaluation.quarantined.drop(*reference_columns).cache()
+    accepted = evaluation.accepted.drop(*reference_columns)
+    quarantined = evaluation.quarantined.drop(*reference_columns)
     accepted_rows = accepted.count()
     quarantined_rows = quarantined.count()
     if accepted_rows + quarantined_rows != deduplicated_rows:
@@ -124,9 +124,6 @@ def run_silver_dataset(
             identifier="quality_metric_id",
         )
 
-    accepted.unpersist()
-    quarantined.unpersist()
-    deduplicated.unpersist()
     return SilverPipelineResult(
         dataset_name=dataset_name,
         run_id=run_id,

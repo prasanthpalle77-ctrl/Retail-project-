@@ -277,7 +277,7 @@ def process_stream_batch(
         identifier="_stream_record_id",
     )
     standardized = standardize_bronze(bronze.drop("_stream_record_id"), dataset_name)
-    deduplicated = deduplicate_latest(standardized, dataset_name).cache()
+    deduplicated = deduplicate_latest(standardized, dataset_name)
     deduplicated_rows = int(deduplicated.count())
     within_duplicates = rows_read - deduplicated_rows
     event_timestamp = spec.event_timestamp
@@ -334,7 +334,6 @@ def process_stream_batch(
     target_path = silver_root / dataset_name
     accepted = evaluation.accepted.drop("_failed_rule_ids")
     to_merge, replayed_rows = _split_exact_replays(spark, accepted, target_path, spec.business_keys)
-    to_merge = to_merge.cache()
     merged_rows = int(to_merge.count())
     merge_current_state(
         spark,
@@ -409,8 +408,6 @@ def process_stream_batch(
         silver_root / "_stream_batch_audit",
         identifier="stream_batch_audit_id",
     )
-    to_merge.unpersist()
-    deduplicated.unpersist()
     if status != "PASS":
         raise RuntimeError(f"Streaming batch reconciliation failed for {stream_name}.")
     return StreamBatchResult(
