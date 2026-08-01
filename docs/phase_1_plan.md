@@ -325,10 +325,10 @@ terraform/               optional infrastructure examples
 - [x] Repository structure and milestones defined.
 - [x] Synthetic data generation is runnable.
 - [ ] Batch and streaming Bronze ingestion are runnable.
-- [ ] Silver cleaning, CDC, SCD, and quarantine are runnable.
-- [ ] Gold dimensions, facts, aggregates, and KPIs are runnable.
-- [ ] Audit and reconciliation tables are populated.
-- [ ] Automated tests prove idempotency and recovery.
+- [x] Silver cleaning, CDC, SCD, and quarantine are runnable.
+- [x] Gold dimensions, facts, aggregates, and KPIs are runnable.
+- [x] Audit and reconciliation tables are populated.
+- [x] Automated tests prove idempotency and recovery.
 - [ ] RAG indexing, structured retrieval, citations, and guardrails are runnable.
 - [ ] Databricks deployment assets validate and deploy to development.
 - [ ] Operations, security, deployment, recovery, and RAG evaluation reports are complete.
