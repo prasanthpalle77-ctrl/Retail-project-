@@ -88,3 +88,30 @@ def merge_insert_or_update(
     delta.alias("t").merge(
         source.alias("s"), f"t.`{identifier}` = s.`{identifier}`"
     ).whenMatchedUpdateAll().whenNotMatchedInsertAll().execute()
+
+
+def synchronize_snapshot(
+    spark: Any,
+    source: Any,
+    target_path: Path,
+    *,
+    identifiers: tuple[str, ...],
+) -> None:
+    """Synchronize a derived Delta snapshot using stable keys, including removals."""
+
+    if not identifiers:
+        raise ValueError("Snapshot synchronization requires at least one identifier.")
+    target_path = target_path.resolve()
+    delta = _delta_table(spark, target_path)
+    if delta is None:
+        source.write.format("delta").mode("overwrite").save(str(target_path))
+        return
+    condition = " AND ".join(f"t.`{name}` <=> s.`{name}`" for name in identifiers)
+    (
+        delta.alias("t")
+        .merge(source.alias("s"), condition)
+        .whenMatchedUpdateAll()
+        .whenNotMatchedInsertAll()
+        .whenNotMatchedBySourceDelete()
+        .execute()
+    )

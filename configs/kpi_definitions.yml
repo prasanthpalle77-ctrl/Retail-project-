@@ -1,29 +1,51 @@
+version: 1
 kpis:
   gross_sales:
+    display_name: Gross Sales
     grain: [date, channel]
-    formula: SUM(gross_amount) for non-cancelled orders
+    formula: Sum gross order value for non-cancelled certified orders.
+    certified_table: retail_kpi_daily
+    measure_column: gross_sales
     owner: finance_analytics
   net_sales:
+    display_name: Net Sales
     grain: [date, channel]
-    formula: SUM(gross_amount - discount_amount - refund_amount)
+    formula: Gross sales less discounts and recognized refunds.
+    certified_table: retail_kpi_daily
+    measure_column: net_sales
     owner: finance_analytics
   net_revenue:
+    display_name: Net Revenue
     grain: [date, channel]
-    formula: gross_sales + tax + shipping_revenue - discounts - refunds
+    formula: Gross sales plus tax and shipping, less discounts and refunds.
+    certified_table: retail_kpi_daily
+    measure_column: net_revenue
     owner: finance_analytics
   average_order_value:
+    display_name: Average Order Value
     grain: [date, channel]
-    formula: net_sales / distinct completed orders
+    formula: Net sales divided by distinct certified orders; zero when no orders exist.
+    certified_table: retail_kpi_daily
+    measure_column: average_order_value
     owner: sales_analytics
   return_rate:
+    display_name: Return Rate
     grain: [date, product]
-    formula: returned_units / sold_units
+    formula: Returned units divided by sold units; zero when no units were sold.
+    certified_table: agg_daily_product_sales
+    measure_column: return_rate
     owner: retail_operations
   conversion_rate:
+    display_name: Conversion Rate
     grain: [date, device_type]
-    formula: sessions_with_purchase / eligible_sessions
+    formula: Distinct sessions with a purchase divided by distinct eligible sessions.
+    certified_table: agg_channel_funnel
+    measure_column: conversion_rate
     owner: digital_analytics
   stockout_rate:
+    display_name: Stockout Rate
     grain: [date, store]
-    formula: out_of_stock_product_store_observations / total_product_store_observations
+    formula: Product-store observations at zero on-hand divided by all observations.
+    certified_table: agg_inventory_health
+    measure_column: stockout_rate
     owner: inventory_operations

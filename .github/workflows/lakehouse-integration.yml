@@ -1,0 +1,30 @@
+name: Lakehouse Integration
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  spark-delta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      SPARK_LOCAL_IP: 127.0.0.1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install lakehouse and test dependencies
+        run: python -m pip install -r requirements-dev.txt -r requirements-lakehouse.txt
+      - name: Spark and Delta integration tests
+        run: python -m pytest -m integration -p no:cacheprovider
