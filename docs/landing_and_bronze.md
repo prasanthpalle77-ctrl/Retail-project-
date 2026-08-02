@@ -20,7 +20,7 @@ The default invalid scenarios are:
 - delivery timestamp before shipment
 - duplicate customer event and unexpected schema field
 
-The same options and seed produce byte-identical source files, allowing deterministic regression tests.
+The same options and seed produce byte-identical source files, allowing deterministic replay and recovery.
 
 ## Landing guarantees
 
@@ -74,10 +74,4 @@ Run all Bronze datasets from WSL:
 ```powershell
 wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .venv-wsl/bin/python scripts/run_bronze_batch.py 20260101T000000Z_seed42"
 wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .venv-wsl/bin/python scripts/verify_bronze.py data/generated/batch_id=20260101T000000Z_seed42"
-```
-
-Run the integration replay proof:
-
-```powershell
-wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .venv-wsl/bin/python -m pytest -p no:cacheprovider tests/integration/test_bronze_ingestion.py"
 ```

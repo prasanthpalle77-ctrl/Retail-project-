@@ -71,9 +71,3 @@ Reconcile all outputs and list failed rules:
 ```powershell
 wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .venv-wsl/bin/python scripts/verify_silver.py SILVER-DEMO-SEED43"
 ```
-
-Run the replay and late-arriving integration proofs:
-
-```powershell
-wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .venv-wsl/bin/python -m pytest -p no:cacheprovider tests/integration/test_silver_pipeline.py"
-```

@@ -1,4 +1,6 @@
 {
+  "update_mask": "resources,description",
+  "app": {
   "name": "novaretail-copilot",
   "description": "Production chat interface for NovaRetail KPIs, operations, and policies.",
   "resources": [
@@ -59,4 +61,5 @@
       }
     }
   ]
+  }
 }

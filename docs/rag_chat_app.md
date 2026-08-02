@@ -1,52 +1,21 @@
-# NovaRetail Copilot Chat App
+# Production NovaRetail Copilot
 
-The Streamlit application in `apps/retail_copilot` provides a chat-style interface for the
-governed RAG system. It keeps conversation history in the browser session and shows certified
-rows, citations, and approved SQL in expandable sections.
+The Streamlit app in `apps/retail_copilot` provides a governed chat interface with conversation history, certified result rows, citations, and approved SQL.
 
-Live development app:
+Open it here: [NovaRetail Copilot](https://novaretail-copilot-7474648027961612.aws.databricksapps.com)
 
-`https://novaretail-copilot-7474648027961612.aws.databricksapps.com`
+The Databricks app service principal has `CAN_USE` on the SQL warehouse and read-only access to approved `novaretail_prod.gold` and `novaretail_prod.governance` tables. It has no table mutation permission.
 
-## Evidence and permissions
-
-The application has read-only access to six certified Unity Catalog tables and `CAN_USE` on the
-Serverless Starter Warehouse. Databricks creates a dedicated service principal for the app. No
-personal token or GitHub password is stored in the application.
-
-The two evidence routes remain unchanged:
-
-- Governed Markdown documents answer policy and operations questions.
-- Pre-approved, read-only SQL templates answer data-arrival and Gold KPI questions.
-
-## Deploy
-
-Build the wheel and assemble the deployment directory:
+## Deploy the app
 
 ```powershell
 python -m pip wheel . --no-deps --wheel-dir dist
-python scripts\stage_copilot_app.py --output C:\tmp\novaretail-copilot-app
+python scripts\stage_copilot_app.py --output C:\tmp\novaretail-copilot-prod
+databricks apps create-update novaretail-copilot `
+  --json @apps/retail_copilot/resources.prod.json
+databricks sync --full C:\tmp\novaretail-copilot-prod `
+  /Workspace/Users/prasanthpalle077@gmail.com/novaretail-copilot
+databricks apps start novaretail-copilot
 ```
 
-Create the app once:
-
-```powershell
-databricks apps create novaretail-copilot `
-  --json @apps/retail_copilot/resources.dev.json `
-  --profile novaretail-dev
-```
-
-Upload and deploy:
-
-```powershell
-databricks sync C:\tmp\novaretail-copilot-app `
-  /Workspace/Users/prasanthpalle077@gmail.com/novaretail-copilot `
-  --profile novaretail-dev
-
-databricks apps deploy novaretail-copilot `
-  --source-code-path /Workspace/Users/prasanthpalle077@gmail.com/novaretail-copilot `
-  --profile novaretail-dev
-```
-
-Free Edition can stop an app after 24 hours. Open **Databricks Apps**, select
-`novaretail-copilot`, and click **Start** to restart it.
+Databricks Free Edition can stop app compute after its allowed active period. If the link is unavailable, open **Compute > Apps**, select `novaretail-copilot`, and click **Start**.

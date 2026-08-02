@@ -24,7 +24,7 @@ class SqlSafetyError(ValueError):
 
 
 class SqlExecutor(Protocol):
-    """Adapter contract for Spark, Databricks SQL, or a test executor."""
+    """Adapter contract for Spark or Databricks SQL execution."""
 
     def __call__(self, sql: str) -> Sequence[Mapping[str, Any]]: ...
 

@@ -1,188 +1,115 @@
-# NovaRetail Retail Intelligence Lakehouse and AI RAG Platform
+# NovaRetail Production Lakehouse and AI RAG Platform
 
-NovaRetail is a production-style retail data engineering and AI portfolio project. It combines batch and streaming ingestion, Delta Lake medallion processing, dimensional analytics, data quality, observability, and a citation-grounded retail data copilot.
+NovaRetail is a production-only retail data platform on Databricks. It processes batch and streaming retail data through Bronze, Silver, and Gold layers, publishes certified business KPIs, monitors data arrival, and provides a citation-grounded Copilot.
 
-Live chat interface: [NovaRetail Copilot](https://novaretail-copilot-7474648027961612.aws.databricksapps.com)
+Open the production chat: [NovaRetail Copilot](https://novaretail-copilot-7474648027961612.aws.databricksapps.com)
 
-The repository is intentionally local-first. Core logic can be developed and tested on a Windows workstation, while the same packaged code deploys to Databricks without coupling business logic to notebooks.
+## Production status
 
-## Current status
+- Unity Catalog: `novaretail_prod`
+- Orders: 5,000,000
+- Order items: 10,000,000
+- Total Bronze rows: 26,601,000
+- Production workflows: batch pipeline, available-now streams, big-data load, and RAG Copilot query
+- Copilot: running and connected only to production Gold and governance tables
+- Deployment target: `prod`
 
-- Phase 1 architecture and implementation plan: complete.
-- Phase 2 repository foundation: complete.
-- Milestone 2 synthetic sources, immutable Landing, and Delta Bronze: complete.
-- Milestone 3 typed Silver, quality quarantine, CDC merge, and SCD Type 2: complete.
-- Milestone 4 Gold dimensions, facts, aggregates, KPIs, and reconciliation: complete.
-- Milestone 5 checkpointed customer-event and inventory streaming: complete.
-- Milestone 6 local citation-grounded RAG copilot and safe Gold SQL routing: complete.
-- Milestone 7 Databricks bundle, jobs, OIDC delivery, and runbooks: complete.
-- Live Databricks development deployment and batch, streaming, and RAG acceptance: complete.
-- Distributed 5M-order data load, registered Unity Catalog tables, arrival monitoring, and live Gold RAG query job: implemented.
-
-See [docs/phase_1_plan.md](docs/phase_1_plan.md) for the full architecture, requirements, data model, controls, milestones, and acceptance checklist.
-
-Implementation details and reproducible proofs are documented in [docs/landing_and_bronze.md](docs/landing_and_bronze.md), [docs/silver_quality_and_scd.md](docs/silver_quality_and_scd.md), [docs/gold_analytics.md](docs/gold_analytics.md), [docs/structured_streaming.md](docs/structured_streaming.md), [docs/rag_copilot.md](docs/rag_copilot.md), [docs/rag_chat_app.md](docs/rag_chat_app.md), [docs/databricks_deployment.md](docs/databricks_deployment.md), and [docs/big_data_rag_operations.md](docs/big_data_rag_operations.md).
-
-## Solution flow
+## Data flow
 
 ```mermaid
 flowchart LR
-    S1["Batch retail files"] --> L["Landing"]
-    S2["Clickstream and inventory events"] --> L
-    L --> B["Bronze Delta"]
-    B --> Q["Validation and quarantine"]
-    Q --> S["Silver canonical tables"]
-    S --> C["CDC and SCD processing"]
-    C --> G["Gold dimensions, facts, and KPIs"]
-    D["Policies, manuals, glossary, and runbooks"] --> V["Document vector index"]
-    G --> SQL["Approved read-only SQL"]
-    V --> R["NovaRetail Data Copilot"]
-    SQL --> R
-    O["Audit, reconciliation, lineage, and monitoring"] -.-> B
-    O -.-> S
-    O -.-> G
-    O -.-> R
+    A["Retail source data"] --> B["Bronze raw Delta tables"]
+    B --> C["Quality checks and quarantine"]
+    C --> D["Silver standardized tables"]
+    D --> E["Gold facts, dimensions, and KPIs"]
+    E --> F["Dashboards and approved SQL"]
+    G["Policies, glossary, and runbooks"] --> H["RAG document index"]
+    E --> I["Retail Copilot"]
+    H --> I
+    J["Arrival status, audit, and reconciliation"] -.-> B
+    J -.-> D
+    J -.-> E
 ```
 
-## Prerequisites
+## Where the data is stored
 
-- Git
-- Python 3.11 or 3.12
-- Java 17 for local PySpark execution
-- PowerShell 7 recommended on Windows
-- Databricks Free Edition or a Databricks workspace for cloud milestones
+All governed data is stored in the Databricks Unity Catalog `novaretail_prod`:
 
-Java is not required for the initial non-Spark unit tests.
+- `novaretail_prod.bronze`: raw accepted source data
+- `novaretail_prod.silver`: cleaned and standardized business data
+- `novaretail_prod.gold`: facts, dimensions, aggregates, and certified KPIs
+- `novaretail_prod.governance`: arrival status, pipeline runs, quality, and audit evidence
+- `novaretail_prod.rag`: RAG-related governed assets
+- `novaretail_prod.platform`: production managed Volume and platform storage
 
-Install a checksum-verified project-local Temurin 17 runtime on Windows with:
+See [big_data_rag_operations.md](docs/big_data_rag_operations.md) for the exact tables and monitoring queries.
+
+## How the pipeline starts
+
+The workflows are intentionally started manually so the Free Edition workspace does not consume compute unexpectedly.
+
+1. Open Databricks **Jobs & Pipelines**.
+2. Open the required workflow whose name starts with `novaretail-prod-`.
+3. Select **Run now**.
+4. Open the run and confirm every task is green.
+5. Check `novaretail_prod.governance.data_arrival_status` to confirm the expected rows arrived.
+
+The production workflows can also be run from the CLI:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup_java.ps1
+databricks bundle run --target prod retail_big_data_load
+databricks bundle run --target prod rag_copilot_query
+databricks bundle run --target prod retail_batch_pipeline
+databricks bundle run --target prod retail_streaming_pipeline
 ```
 
-## Windows setup
+## Production deployment
+
+Install the application dependencies and validate the environment:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-pip install -r requirements-dev.txt
-python scripts\validate_environment.py
-pytest
-```
-
-Install the full local lakehouse and RAG dependencies when those milestones begin:
-
-```powershell
 pip install -r requirements.txt
-```
-
-Install only the lakehouse dependencies with:
-
-```powershell
-pip install -r requirements-lakehouse.txt
-```
-
-Copy the environment template before running services:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Never commit `.env`, tokens, passwords, service-principal secrets, or cloud credentials.
-
-## Configuration
-
-Environment configuration lives in `configs/`. Application code loads `dev.yml` as the base configuration and applies the selected environment file over it.
-
-```python
-from retail_lakehouse.config.settings import load_settings
-
-settings = load_settings("dev")
-```
-
-Set `NOVARETAIL_ENV` to `dev`, `test`, `staging`, or `prod`. Secrets are supplied separately through environment variables or Databricks secret scopes.
-
-## Generate a synthetic source batch
-
-The generator is deterministic by seed and creates customers, products, stores, suppliers, orders, order items, payments, inventory events, returns, promotions, shipments, and customer events. Invalid mode deliberately adds duplicates, broken keys, status errors, negative values, reconciliation errors, event duplication, and schema drift.
-
-```powershell
-python scripts\generate_data.py --seed 42 --customers 20 --products 15 --orders 30
-python scripts\stage_landing.py "data\generated\batch_id=20260101T000000Z_seed42"
-```
-
-Running `stage_landing.py` again reports `ALREADY_STAGED` for the same checksums and does not copy the files twice.
-
-## Run local Delta Bronze on Windows through WSL2
-
-Native Windows Spark depends on Hadoop's unavailable official `winutils.exe` binary. The supported project workflow runs Spark inside the installed Ubuntu WSL2 distribution, while generation and Landing can run from PowerShell.
-
-```powershell
-wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && python3 -m venv .venv-wsl"
-wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && .venv-wsl/bin/python -m pip install -r requirements-lakehouse.txt"
-wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .venv-wsl/bin/python scripts/run_bronze_batch.py 20260101T000000Z_seed42"
-```
-
-The first Spark start retrieves the matching open-source Delta Lake runtime JARs from Maven Central. Later runs use the local dependency cache.
-
-## Run typed Silver and quality controls
-
-Process all 12 datasets in dependency order and reconcile the results:
-
-```powershell
-wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .venv-wsl/bin/python scripts/run_silver.py --dataset all --run-id SILVER-DEMO-SEED43"
-wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .venv-wsl/bin/python scripts/verify_silver.py SILVER-DEMO-SEED43"
-```
-
-Silver uses executable YAML rules for row validity and cross-table relationships. Failed rows retain their rule IDs in Delta quarantine; rule-level counts and failure percentages are persisted under the Silver quality-results table.
-
-## Publish Gold analytics
-
-Build conformed dimensions, facts, aggregates, certified KPIs, and reconciliation evidence:
-
-```powershell
-wsl bash -lc "cd /mnt/c/Users/Orcon/OneDrive/Documents/Rag && PYTHONPATH=src .venv-wsl/bin/python scripts/run_gold.py --run-id GOLD-DEMO-SEED43"
-```
-
-The KPI catalog is maintained in `configs/kpi_definitions.yml`; example certified queries are available in `sql/gold/example_analytics.sql`.
-
-## Run the local RAG copilot
-
-Build the free deterministic index, ask a citation-backed document question, and run the offline safety evaluation:
-
-```powershell
-python scripts\index_documents.py
-python scripts\ask_copilot.py "How many days can I return an unopened item?"
-python scripts\evaluate_rag.py
-```
-
-The document path has no paid API, account, or model-download requirement. Numerical questions route only to approved Gold SQL and do not produce a value until a Spark or Databricks SQL executor is connected. See [docs/rag_copilot.md](docs/rag_copilot.md) for the evidence contract, controls, API, and evaluation details.
-
-## Validate and deploy to Databricks
-
-The bundle has development, staging, and production targets plus batch, streaming, and RAG evaluation jobs. Local validation creates no cloud resources:
-
-```powershell
+python scripts\validate_environment.py
 python scripts\validate_bundle.py
-databricks bundle validate --target dev
-databricks bundle plan --target dev
 ```
 
-Deployment is intentionally manual and uses GitHub OIDC without stored Databricks secrets. No job has an automatic schedule. See [docs/databricks_deployment.md](docs/databricks_deployment.md), [docs/security_and_governance.md](docs/security_and_governance.md), [docs/operations_and_recovery.md](docs/operations_and_recovery.md), and [docs/final_acceptance_report.md](docs/final_acceptance_report.md).
+Deploy the single production bundle target:
 
-## Repository conventions
+```powershell
+databricks bundle validate --target prod
+databricks bundle plan --target prod
+databricks bundle deploy --target prod
+```
 
-- Reusable logic belongs in `src/retail_lakehouse/`.
-- Notebooks are orchestration and exploration surfaces, not the home of business logic.
-- SQL assets belong in `sql/`.
-- Generated data, checkpoints, logs, local warehouses, and secrets are excluded from Git.
-- All timestamps are UTC unless a documented business calculation requires another timezone.
-- Every pipeline uses deterministic identifiers, audit metadata, and idempotent writes.
+Deployment through GitHub is manual using [.github/workflows/databricks-deploy.yml](.github/workflows/databricks-deploy.yml). No workflow has an automatic schedule.
+
+## Production Copilot
+
+The Copilot answers two governed question types:
+
+- Policy and operating questions are answered from indexed documents with citations.
+- KPI and data questions use approved, read-only SQL against production Gold tables.
+
+It does not answer unrelated general questions. This guardrail prevents unsupported answers and protects the data platform. See [rag_chat_app.md](docs/rag_chat_app.md) and [rag_copilot.md](docs/rag_copilot.md).
+
+## Important files
+
+- `databricks.yml`: the production-only Databricks bundle
+- `configs/prod.yml`: production application and storage configuration
+- `resources/lakehouse_jobs.yml`: production job definitions
+- `src/retail_lakehouse/`: reusable pipeline and RAG application code
+- `scripts/`: production operational entrypoints
+- `apps/retail_copilot/`: production chat application
+- `docs/`: operational and architecture documentation
+
+Secrets, passwords, OAuth tokens, local data, build output, and Databricks state are excluded from Git.
 
 ## Git identity
 
-This repository uses repository-local Git identity settings so it can remain separate from company repositories. Authentication to GitHub uses OAuth through Git Credential Manager; passwords are never stored in this project.
+The repository uses `prasanthhulk <prasanthpalle77@gmail.com>` as its repository-local Git identity. GitHub authentication uses OAuth through Git Credential Manager; passwords are not stored in this repository.
 
 ## License
 

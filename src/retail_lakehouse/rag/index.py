@@ -1,4 +1,4 @@
-"""Small deterministic BM25 index for free local development and CI."""
+"""Deterministic BM25 index for governed document retrieval."""
 
 from __future__ import annotations
 

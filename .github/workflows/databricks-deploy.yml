@@ -1,4 +1,4 @@
-name: Databricks Bundle Deployment
+name: Databricks Production Deployment
 
 on:
   workflow_dispatch:

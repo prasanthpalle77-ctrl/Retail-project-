@@ -11,7 +11,7 @@ from retail_lakehouse.runtime import configure_java
 def create_spark_session(settings: dict[str, Any]) -> Any:
     """Build a Spark session and enable Delta extensions in local mode.
 
-    Imports are lazy so documentation, configuration, and non-Spark unit tests
+    Imports are lazy so documentation and configuration utilities
     remain usable before Java and PySpark are installed.
     """
 

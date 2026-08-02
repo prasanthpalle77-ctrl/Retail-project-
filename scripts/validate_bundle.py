@@ -16,7 +16,6 @@ class BundleValidationError(ValueError):
 
 PROJECT_ROOT_ENTRYPOINTS = {
     "scripts/ask_databricks_rag.py",
-    "scripts/evaluate_rag.py",
     "scripts/run_bronze_batch.py",
     "scripts/run_gold.py",
     "scripts/run_silver.py",
