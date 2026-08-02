@@ -153,30 +153,6 @@ resources:
             dependencies:
               - ../dist/*.whl
 
-    rag_evaluation:
-      name: novaretail-${bundle.target}-rag-evaluation
-      description: Offline citation, refusal, injection, and routing evaluation.
-      max_concurrent_runs: 1
-      timeout_seconds: 1800
-      tags:
-        application: novaretail
-        environment: ${bundle.target}
-        workload: rag-evaluation
-      tasks:
-        - task_key: evaluate
-          environment_key: default
-          spark_python_task:
-            python_file: ${workspace.file_path}/scripts/evaluate_rag.py
-            parameters:
-              - --project-root
-              - ${workspace.file_path}
-      environments:
-        - environment_key: default
-          spec:
-            environment_version: "3"
-            dependencies:
-              - ../dist/*.whl
-
     retail_big_data_load:
       name: novaretail-${bundle.target}-big-data-load
       description: Generate and register the distributed 5M-order retail model.

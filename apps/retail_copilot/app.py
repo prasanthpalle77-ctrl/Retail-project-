@@ -21,7 +21,7 @@ from retail_lakehouse.rag import (
 )
 
 ROOT = Path(__file__).resolve().parent
-CATALOG = os.getenv("NOVARETAIL_CATALOG", "novaretail_dev")
+CATALOG = os.getenv("NOVARETAIL_CATALOG", "novaretail_prod")
 WAREHOUSE_ID = os.getenv("WAREHOUSE_ID", "")
 _IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 

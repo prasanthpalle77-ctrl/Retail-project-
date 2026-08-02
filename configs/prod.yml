@@ -1,5 +1,7 @@
 application:
+  name: novaretail
   environment: prod
+  timezone: UTC
   log_level: INFO
 
 storage:
@@ -21,6 +23,14 @@ spark:
 
 databricks:
   catalog: novaretail_prod
+  schemas:
+    bronze: bronze
+    silver: silver
+    gold: gold
+    governance: governance
+    rag: rag
 
 pipeline:
+  default_currency: USD
+  allowed_lateness_hours: 24
   fail_on_critical_quality_rule: true

@@ -11,7 +11,7 @@ from retail_lakehouse.generation import DatabricksScaleOptions, build_scale_stat
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--catalog", default="novaretail_dev")
+    parser.add_argument("--catalog", default="novaretail_prod")
     parser.add_argument("--orders", type=int, default=5_000_000)
     parser.add_argument("--items-per-order", type=int, default=2)
     parser.add_argument("--customers", type=int, default=500_000)

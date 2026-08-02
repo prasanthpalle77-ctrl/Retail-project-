@@ -15,7 +15,7 @@ from retail_lakehouse.transformations import SILVER_SPECS
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("run_id")
-    parser.add_argument("--environment", default="dev")
+    parser.add_argument("--environment", default="prod")
     return parser.parse_args()
 
 

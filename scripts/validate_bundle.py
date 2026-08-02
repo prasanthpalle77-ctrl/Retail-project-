@@ -142,13 +142,10 @@ def validate_bundle(root: Path) -> dict[str, Any]:
     if bundle_metadata.get("name") != "novaretail":
         raise BundleValidationError("Bundle name must be novaretail.")
     targets = _mapping(bundle.get("targets"), "targets")
-    if set(targets) != {"dev", "staging", "prod"}:
-        raise BundleValidationError("Bundle targets must be dev, staging, and prod.")
-    if _mapping(targets["dev"], "dev target").get("mode") != "development":
-        raise BundleValidationError("Dev target must use development mode.")
-    for target in ("staging", "prod"):
-        if _mapping(targets[target], f"{target} target").get("mode") != "production":
-            raise BundleValidationError(f"{target} target must use production mode.")
+    if set(targets) != {"prod"}:
+        raise BundleValidationError("Bundle must contain only the prod target.")
+    if _mapping(targets["prod"], "prod target").get("mode") != "production":
+        raise BundleValidationError("Prod target must use production mode.")
 
     jobs: dict[str, Any] = {}
     resource_files = _resource_files(root, bundle)
@@ -160,7 +157,6 @@ def validate_bundle(root: Path) -> dict[str, Any]:
             jobs[key] = value
     required_jobs = {
         "rag_copilot_query",
-        "rag_evaluation",
         "retail_batch_pipeline",
         "retail_big_data_load",
         "retail_streaming_pipeline",

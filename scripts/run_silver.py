@@ -18,7 +18,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", choices=["all", *SILVER_SPECS], default="all")
     parser.add_argument("--run-id", default=None)
-    parser.add_argument("--environment", default="dev")
+    parser.add_argument("--environment", default="prod")
     parser.add_argument("--rules", type=Path, default=Path("configs/data_quality_rules.yml"))
     parser.add_argument("--project-root", type=Path, default=None)
     return parser.parse_args()

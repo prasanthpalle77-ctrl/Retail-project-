@@ -14,7 +14,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("dataset", choices=("customer_events", "inventory_events"))
     parser.add_argument("source_path", type=Path)
-    parser.add_argument("--environment", default="dev")
+    parser.add_argument("--environment", default="prod")
     parser.add_argument("--stream-name", default=None)
     parser.add_argument("--allowed-lateness-hours", type=int, default=None)
     parser.add_argument("--max-files-per-trigger", type=int, default=1)

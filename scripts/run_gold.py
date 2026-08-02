@@ -16,7 +16,7 @@ from retail_lakehouse.spark import create_spark_session
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-id", default=None)
-    parser.add_argument("--environment", default="dev")
+    parser.add_argument("--environment", default="prod")
     parser.add_argument("--kpi-catalog", type=Path, default=Path("configs/kpi_definitions.yml"))
     parser.add_argument("--project-root", type=Path, default=None)
     return parser.parse_args()

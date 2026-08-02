@@ -14,7 +14,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("generated_batch", type=Path)
     parser.add_argument("--bronze-root", type=Path, default=None)
-    parser.add_argument("--environment", default="dev")
+    parser.add_argument("--environment", default="prod")
     return parser.parse_args()
 
 

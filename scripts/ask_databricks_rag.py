@@ -14,7 +14,7 @@ from retail_lakehouse.rag import ApprovedSqlCatalog, LexicalIndex, RetailCopilot
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--question", required=True)
-    parser.add_argument("--catalog", default="novaretail_dev")
+    parser.add_argument("--catalog", default="novaretail_prod")
     parser.add_argument("--project-root", type=Path, required=True)
     return parser.parse_args()
 

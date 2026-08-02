@@ -14,13 +14,13 @@ artifacts:
 variables:
   catalog:
     description: Unity Catalog catalog for this target.
-    default: novaretail_dev
+    default: novaretail_prod
   environment:
     description: NovaRetail configuration environment.
-    default: databricks_dev
+    default: prod
   volume_root:
     description: Managed Unity Catalog Volume root used by all layers.
-    default: /Volumes/novaretail_dev/platform/data
+    default: /Volumes/novaretail_prod/platform/data
 
 sync:
   include:
@@ -34,7 +34,6 @@ sync:
     - .cache/**
     - .git/**
     - .mypy_cache/**
-    - .pytest_cache/**
     - .ruff_cache/**
     - .runtime/**
     - .venv/**
@@ -50,25 +49,11 @@ sync:
     - tmp/**
 
 targets:
-  dev:
-    default: true
-    mode: development
-    variables:
-      catalog: novaretail_dev
-      environment: databricks_dev
-      volume_root: /Volumes/novaretail_dev/platform/data
-  staging:
-    mode: production
-    workspace:
-      root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
-    variables:
-      catalog: novaretail_staging
-      environment: staging
-      volume_root: /Volumes/novaretail_staging/platform/data
   prod:
+    default: true
     mode: production
     workspace:
-      root_path: /Workspace/Shared/.bundle/${bundle.name}/${bundle.target}
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/prod
     variables:
       catalog: novaretail_prod
       environment: prod

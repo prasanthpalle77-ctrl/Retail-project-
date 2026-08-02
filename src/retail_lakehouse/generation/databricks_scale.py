@@ -12,7 +12,7 @@ _IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 class DatabricksScaleOptions:
     """Cardinality controls for deterministic distributed data generation."""
 
-    catalog: str = "novaretail_dev"
+    catalog: str = "novaretail_prod"
     order_count: int = 5_000_000
     items_per_order: int = 2
     customer_count: int = 500_000

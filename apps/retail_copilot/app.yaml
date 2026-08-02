@@ -10,4 +10,4 @@ env:
   - name: WAREHOUSE_ID
     valueFrom: retail-warehouse
   - name: NOVARETAIL_CATALOG
-    value: novaretail_dev
+    value: novaretail_prod

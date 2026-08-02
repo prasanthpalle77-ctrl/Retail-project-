@@ -15,7 +15,7 @@ from retail_lakehouse.spark import create_spark_session
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("manifest", type=Path)
-    parser.add_argument("--environment", default="dev")
+    parser.add_argument("--environment", default="prod")
     return parser.parse_args()
 
 

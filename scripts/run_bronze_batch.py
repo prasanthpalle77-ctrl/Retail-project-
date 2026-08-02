@@ -17,7 +17,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("batch_id")
     parser.add_argument("--manifest-root", type=Path, default=Path("data/landing/_manifests"))
     parser.add_argument("--bronze-root", type=Path, default=None)
-    parser.add_argument("--environment", default="dev")
+    parser.add_argument("--environment", default="prod")
     parser.add_argument("--project-root", type=Path, default=None)
     return parser.parse_args()
 

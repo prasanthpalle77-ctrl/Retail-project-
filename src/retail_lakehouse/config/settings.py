@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 import os
-from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-SUPPORTED_ENVIRONMENTS = frozenset({"databricks_dev", "dev", "test", "staging", "prod"})
+SUPPORTED_ENVIRONMENTS = frozenset({"prod"})
 
 
 class SettingsError(ValueError):
@@ -47,35 +46,23 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     return payload
 
 
-def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
-    result = deepcopy(base)
-    for key, value in override.items():
-        if isinstance(value, dict) and isinstance(result.get(key), dict):
-            result[key] = _deep_merge(result[key], value)
-        else:
-            result[key] = deepcopy(value)
-    return result
-
-
 def load_settings(
     environment: str | None = None, project_root: Path | None = None
 ) -> dict[str, Any]:
-    """Load the development baseline and apply an environment override.
+    """Load the production configuration.
 
     Secrets are deliberately excluded. Callers obtain secrets from environment
     variables locally or a managed secret provider in Databricks.
     """
 
-    selected_value = environment or os.getenv("NOVARETAIL_ENV") or "dev"
+    selected_value = environment or os.getenv("NOVARETAIL_ENV") or "prod"
     selected = selected_value.lower()
     if selected not in SUPPORTED_ENVIRONMENTS:
         allowed = ", ".join(sorted(SUPPORTED_ENVIRONMENTS))
         raise SettingsError(f"Unsupported environment '{selected}'. Choose one of: {allowed}")
 
     root = project_root.resolve() if project_root else find_project_root()
-    base = _load_yaml(root / "configs" / "dev.yml")
-    override = {} if selected == "dev" else _load_yaml(root / "configs" / f"{selected}.yml")
-    settings = _deep_merge(base, override)
+    settings = _load_yaml(root / "configs" / "prod.yml")
     settings.setdefault("application", {})["environment"] = selected
     settings["project_root"] = str(root)
     return settings

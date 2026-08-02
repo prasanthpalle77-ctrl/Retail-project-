@@ -31,7 +31,7 @@ def main() -> int:
     root = Path(__file__).resolve().parents[1]
     required_files = [
         root / "pyproject.toml",
-        root / "configs" / "dev.yml",
+        root / "configs" / "prod.yml",
         root / "configs" / "source_config.yml",
         root / "configs" / "data_quality_rules.yml",
         root / "configs" / "kpi_definitions.yml",
